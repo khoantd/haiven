@@ -20,8 +20,14 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
-  assetPrefix: "/boba",
-  images: { unoptimized: true }, // necessary for output = 'export'
+  images: {
+    unoptimized: true,
+    domains: [], // Add any external image domains if needed
+  },
+  // Ensure basePath is consistent in all environments
+  basePath: process.env.NODE_ENV === 'production' ? '/boba' : '',
+  // Ensure assetPrefix matches basePath
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/boba' : '',
 };
 
 if (process.env.NODE_ENV === "development") {
@@ -38,8 +44,6 @@ if (process.env.NODE_ENV === "development") {
   // build a static site, without server-side features
   // only for production build, otherwise rewrites for dev won't work
   nextConfig.output = "export";
-  // production build mounts assets under /boba
-  nextConfig.basePath = "/boba";
 }
 
 module.exports = nextConfig;

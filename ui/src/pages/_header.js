@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "antd";
 import { RiPushpinLine } from "react-icons/ri";
 import Pinboard from "./pinboard";
+import Image from 'next/image';
 
 export default function Header() {
   const [isPinboardVisible, setIsPinboardVisible] = useState(false);
@@ -22,7 +23,12 @@ export default function Header() {
         <header className="header">
           <div className="left-section">
             <div className="logo">
-              <img src="/boba/thoughtworks_logo.png" alt="Logo" />
+              <Image
+                src="/boba/thoughtworks_logo.png"
+                alt="Logo"
+                width={150}
+                height={40}
+              />
             </div>
             <div className="separator"></div>
             <div className="title">Haiven team assistant</div>

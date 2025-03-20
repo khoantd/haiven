@@ -125,7 +125,6 @@ const Pinboard = ({ isModalVisible, onClose }) => {
         return 'Invalid date';
       }
 
-      // Use Intl.DateTimeFormat for consistent formatting
       const formatter = new Intl.DateTimeFormat('en-US', {
         year: 'numeric',
         month: 'long',
@@ -141,7 +140,6 @@ const Pinboard = ({ isModalVisible, onClose }) => {
       else if (dayNum % 10 === 2 && dayNum !== 12) suffix = 'nd';
       else if (dayNum % 10 === 3 && dayNum !== 13) suffix = 'rd';
 
-      // Replace the day number with the suffixed version
       return formatted.replace(/\d+/, dayNum + suffix);
     } catch (error) {
       console.error('Error formatting date:', error);

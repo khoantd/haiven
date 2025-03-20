@@ -4,17 +4,35 @@ import { Tabs } from "antd";
 import { getDisclaimerAndGuidelines } from "../app/_boba_api";
 import MarkdownRenderer from "../app/_markdown_renderer";
 
-const AboutPage = ({}) => {
-  const [disclaimerConfig, setDisclaimerConfig] = useState({});
+const AboutPage = () => {
+  const [disclaimerConfig, setDisclaimerConfig] = useState({
+    title: 'Loading...',
+    message: 'Loading content...',
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     getDisclaimerAndGuidelines((data) => {
-      setDisclaimerConfig({
-        title: data.title,
-        message: data.content,
-      });
+      setIsLoading(false);
+      if (data) {
+        setDisclaimerConfig({
+          title: data.title || 'Disclaimer',
+          message: data.content || 'Loading content...',
+        });
+      } else {
+        setDisclaimerConfig({
+          title: 'Disclaimer',
+          message: 'Unable to load content. Please try again later.',
+        });
+      }
     });
   }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   const aboutText = (
     <div>

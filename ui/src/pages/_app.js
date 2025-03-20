@@ -1,6 +1,6 @@
 // © 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Button, Tooltip, Layout, ConfigProvider } from "antd";
 import { BsChatHeartFill } from "react-icons/bs";
 import { ToastContainer, Slide } from "react-toastify";
@@ -16,14 +16,18 @@ import {
   getModels,
 } from "../app/_boba_api";
 import { getFeatureToggleConfiguration } from "../app/_local_store";
+import Image from 'next/image';
+
+// Use a safe useEffect that works in both environments
+const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }) {
+  // Initialize state with empty values to match SSR
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState();
-
+  const [selectedKey, setSelectedKey] = useState(undefined);
   const [prompts, setPrompts] = useState([]);
   const [contexts, setContexts] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -41,7 +45,8 @@ export default function App({
   const colorturmericyellow = "#CC850A";
   const colordarkgray = "#666666ff";
 
-  useEffect(() => {
+  // Move client-side initialization to useIsomorphicLayoutEffect
+  useIsomorphicLayoutEffect(() => {
     getPrompts(setPrompts);
     getContextSnippets((data) => {
       const labelValuePairs = data.map((context) => {
@@ -123,8 +128,7 @@ export default function App({
       >
         <Head>
           <title>Haiven</title>
-
-          <meta property="og:image" content="/boba/social-preview-image.png" />
+          <meta property="og:image" content={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/boba/social-preview-image.png`} />
           <meta property="og:title" content="Haiven team assistant" />
           <meta
             property="og:description"
@@ -135,10 +139,12 @@ export default function App({
           <meta property="og:image:height" content="630" />
         </Head>
         <div className="social-preview">
-          <img
+          <Image
             className="social-preview-image"
             src="/boba/social-preview-image.png"
             alt="haiven"
+            width={1200}
+            height={630}
           />
         </div>
         <Layout

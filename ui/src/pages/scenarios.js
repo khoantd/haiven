@@ -19,7 +19,7 @@ import {
   RiAliensLine,
 } from "react-icons/ri";
 import ChatHeader from "./_chat_header";
-import { scenarioToText } from "../app/_card_actions";
+import { scenarioToText } from '../app/_card_actions';
 import useLoader from "../hooks/useLoader";
 import ChatExploration from "./_chat_exploration";
 import CardsList from "../app/_cards-list";

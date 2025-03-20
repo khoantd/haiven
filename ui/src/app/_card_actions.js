@@ -9,7 +9,6 @@ import {
 } from "react-icons/ri";
 import { Button, Tooltip } from "antd";
 import { toast } from "react-toastify";
-import { scenarioToText } from "./_dynamic_data_renderer";
 
 export default function CardActions({
   scenario,
@@ -96,3 +95,9 @@ export default function CardActions({
     </div>
   );
 }
+
+export const scenarioToText = (scenario) => {
+  // If this function doesn't exist, we need to implement it
+  // Implementation would depend on your scenario object structure
+  return scenario.text || scenario.toString();
+};

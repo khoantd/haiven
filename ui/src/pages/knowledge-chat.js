@@ -5,29 +5,44 @@ import PromptChat from "../app/_prompt_chat";
 import { getInspirationById } from "../app/_boba_api";
 
 const KnowledgeChatPage = ({ prompts, documents, models }) => {
-  const [promptId, setPromptId] = useState();
+  const [promptId, setPromptId] = useState(null);
   const [initialInput, setInitialInput] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    setPromptId(searchParams.get("prompt"));
-
+    if (typeof window === 'undefined') return;
+    
+    const promptParam = searchParams.get("prompt");
     const inspirationId = searchParams.get("inspiration");
+    
+    setPromptId(promptParam);
+    
     if (inspirationId) {
       getInspirationById(inspirationId, (inspiration) => {
-        setInitialInput(inspiration.prompt_template);
-      }).catch((error) => console.error("Error loading inspiration:", error));
+        setInitialInput(inspiration.prompt_template || '');
+        setIsLoading(false);
+      }).catch((error) => {
+        console.error("Error loading inspiration:", error);
+        setIsLoading(false);
+      });
+    } else {
+      setIsLoading(false);
     }
   }, [searchParams]);
 
-  // Using the "key" property to make sure the component resets when the prompt id changes
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <PromptChat
+      key={promptId}
       promptId={promptId}
       initialInput={initialInput}
-      prompts={prompts}
-      documents={documents}
-      models={models}
+      prompts={prompts || []}
+      documents={documents || []}
+      models={models || []}
       showTextSnippets={false}
       showImageDescription={true}
       pageTitle="Chat with Haiven"
