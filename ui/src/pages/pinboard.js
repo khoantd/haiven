@@ -27,21 +27,37 @@ const Pinboard = ({ isModalVisible, onClose }) => {
   const [isAddingContext, setIsAddingContext] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     setIsMounted(true);
-    if (typeof window !== "undefined") {
-      setPinnedMessages(getPinboardData());
-      setSavedUserContexts(getSortedUserContexts());
-    }
-  }, [
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("pinboard")
-      : null,
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("context")
-      : null,
-  ]);
+    const loadData = () => {
+      try {
+        setPinnedMessages(getPinboardData() || []);
+        setSavedUserContexts(getSortedUserContexts() || []);
+      } catch (error) {
+        console.error('Error loading pinboard data:', error);
+        setPinnedMessages([]);
+        setSavedUserContexts([]);
+      }
+    };
+    
+    loadData();
+    
+    // Listen for storage changes
+    const handleStorageChange = (e) => {
+      if (e.key === 'pinboard' || e.key === 'context') {
+        loadData();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
-  if (!isMounted) return null;
+  // Server-side render a loading state or nothing
+  if (typeof window === 'undefined' || !isMounted) {
+    return null;
+  }
 
   const deleteContext = (context) => {
     deleteContextByTimestamp(context.timestamp);
@@ -103,19 +119,34 @@ const Pinboard = ({ isModalVisible, onClose }) => {
   };
 
   function formatDate(timestamp) {
-    const date = new Date(parseInt(timestamp));
-    const day = date.getDate();
-    let suffix = "th";
-    if (day % 10 === 1 && day !== 11) {
-      suffix = "st";
-    } else if (day % 10 === 2 && day !== 12) {
-      suffix = "nd";
-    } else if (day % 10 === 3 && day !== 13) {
-      suffix = "rd";
+    try {
+      const date = new Date(parseInt(timestamp));
+      if (isNaN(date.getTime())) {
+        return 'Invalid date';
+      }
+
+      // Use Intl.DateTimeFormat for consistent formatting
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const formatted = formatter.format(date);
+      const dayNum = date.getDate();
+      
+      // Add suffix
+      let suffix = 'th';
+      if (dayNum % 10 === 1 && dayNum !== 11) suffix = 'st';
+      else if (dayNum % 10 === 2 && dayNum !== 12) suffix = 'nd';
+      else if (dayNum % 10 === 3 && dayNum !== 13) suffix = 'rd';
+
+      // Replace the day number with the suffixed version
+      return formatted.replace(/\d+/, dayNum + suffix);
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid date';
     }
-    const month = date.toLocaleString("en-US", { month: "long" });
-    const year = date.getFullYear();
-    return `${day}${suffix}, ${month} ${year}`;
   }
 
   const contextAsText = (context) => {

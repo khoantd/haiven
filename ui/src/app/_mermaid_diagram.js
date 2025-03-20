@@ -11,10 +11,17 @@ const MermaidDiagram = ({ chart, config = {} }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   // Generate a unique ID for this diagram instance
-  const uniqueId = React.useMemo(
-    () => `mermaid-${Math.random().toString(36).substring(2, 11)}`,
-    [],
-  );
+  const uniqueId = React.useMemo(() => {
+    // Simple hash function that works in both environments
+    const str = chart || '';
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return `mermaid-${Math.abs(hash).toString(36).substring(0, 8)}`;
+  }, [chart]);
 
   const renderDiagram = useCallback(async () => {
     if (!chart) return;

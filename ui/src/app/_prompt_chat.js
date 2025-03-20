@@ -47,13 +47,13 @@ const PromptChat = ({
   const [allContexts, setAllContexts] = useState([]);
 
   function combineAllContexts(contexts) {
-    const userContexts = getSortedUserContexts();
+    const userContexts = getSortedUserContexts() || [];
     const userContextsForDropdown = userContexts.map((context) => ({
       value: context.title,
       label: context.title,
       isUserDefined: true,
     }));
-    if (contexts !== undefined && contexts.length > 0) {
+    if (contexts && contexts.length > 0) {
       setAllContexts(contexts.concat(userContextsForDropdown));
     } else {
       setAllContexts(userContextsForDropdown);
@@ -108,9 +108,20 @@ const PromptChat = ({
   };
 
   const renderPromptRequest = () => {
-    if (chatRef.current) {
-      return buildFirstChatRequestBody(chatRef.current.prompt);
+    if (!chatRef.current) {
+      return {
+        userinput: userInput,
+        promptid: selectedPrompt?.identifier,
+        ...(selectedContext?.value !== "base" &&
+          selectedContext?.isUserDefined && {
+            userContext: getSummaryForTheUserContext(selectedContext.value),
+          }),
+        ...(selectedContext?.value !== "base" &&
+          !selectedContext?.isUserDefined && { context: selectedContext.value }),
+        ...(selectedDocument !== "base" && { document: selectedDocument }),
+      };
     }
+    return buildFirstChatRequestBody(chatRef.current.prompt);
   };
 
   const submitPromptToBackend = async (messages) => {

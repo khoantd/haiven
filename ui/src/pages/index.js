@@ -1,4 +1,4 @@
-// © 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
+// 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
 import { Card, ConfigProvider, Tag, Tabs, Tooltip } from "antd";
 import Link from "next/link";
 import { useEffect, useState } from "react";

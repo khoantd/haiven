@@ -6,7 +6,7 @@ const HelpTooltip = ({ text, testid = "" }) => {
   return (
     <span data-testid={testid}>
       <Tooltip
-        className="tooltip-help"
+        classNames={{ root: "tooltip-help" }}
         color="#003d4f"
         placement="bottom"
         title={text}

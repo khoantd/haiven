@@ -1,4 +1,4 @@
-// © 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
+// 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
 
 import { useState, useEffect } from "react";
 import { Modal, Button } from "antd";
@@ -35,7 +35,8 @@ export default function PromptPreview({
     }
   }, [promptData, isPromptPreviewModalVisible]);
 
-  const logDiff = (diff) => {
+  const logDiff = (part) => {
+    if (!part) return;
     let text = part.added
       ? "XX"
       : part.removed
@@ -114,8 +115,8 @@ export default function PromptPreview({
   };
 
   const highlightDiffs = (props) => {
-    const { node, ...rest } = props;
-    return <span className="prompt-preview-diff-highlight" {...rest} />;
+    const { node, children, ...rest } = props;
+    return <span className="prompt-preview-diff-highlight" {...rest}>{children}</span>;
   };
 
   const handleCopy = () => {
@@ -185,24 +186,29 @@ export default function PromptPreview({
         {onEditMode ? (
           <textarea
             className="content-editor"
-            defaultValue={prompt}
+            defaultValue={prompt || ''}
             onChange={(e) => {
               setPrompt(e.target.value);
               setAnyUnsavedChanges(true);
             }}
           ></textarea>
         ) : (
-          <ReactMarkdown
-            className="content-viewer"
-            remarkPlugins={[[remarkGfm]]}
-            components={{
-              del(props) {
-                return highlightDiffs(props);
-              },
-            }}
-          >
-            {prompt}
-          </ReactMarkdown>
+          <div className="content-viewer markdown-content">
+            {prompt ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  del: highlightDiffs,
+                  p: ({node, children, ...props}) => <p {...props}>{children}</p>,
+                  a: ({node, children, ...props}) => <a {...props}>{children}</a>
+                }}
+              >
+                {prompt}
+              </ReactMarkdown>
+            ) : (
+              <p>No content to display</p>
+            )}
+          </div>
         )}
         <div className="modal-footer">
           <Button

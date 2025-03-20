@@ -1,4 +1,4 @@
-// © 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
+// 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "antd";
 import Cookies from "js-cookie";
