@@ -9,12 +9,12 @@ COPY ./ui .
 # RUN  yarn --frozen-lockfile
 RUN yarn install --production
 
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN yarn build
 
 # Stage 1: Backend build environment
-FROM python:3.11-slim AS builder
+FROM python:3.11-slim as builder
 
 WORKDIR /app
 
@@ -47,6 +47,7 @@ WORKDIR /app
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY ./app /app
 COPY --from=node-builder /ui/out /app/resources/static/out
+COPY ../../haiven-sample-knowledge-pack /app/haiven-sample-knowledge-pack
 
 # Ensure proper permissions for the app user
 RUN chown -R appuser:appgroup /app
