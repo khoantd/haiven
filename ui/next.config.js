@@ -24,10 +24,8 @@ const nextConfig = {
     unoptimized: true,
     domains: [], // Add any external image domains if needed
   },
-  // Ensure basePath is consistent in all environments
-  basePath: process.env.NODE_ENV === 'production' ? '/boba' : '',
-  // Ensure assetPrefix matches basePath
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/boba' : '',
+  assetPrefix: "/boba",
+  images: { unoptimized: true }, // necessary for output = 'export'
 };
 
 if (process.env.NODE_ENV === "development") {

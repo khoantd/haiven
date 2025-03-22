@@ -138,4 +138,37 @@ inspirations:
       1. User journey steps
       2. Potential pain points
       3. Cognitive load      4. Improvement suggestions 
-    
+
+  - id: system-change-analyzer
+    title: Communicate system changes to end-user
+    category: communication
+    prompt_template:  |
+      Help me communicate this system change:
+       
+      [Describe change briefly: What, why, when, who]
+
+      Include:
+
+      1. Core message
+      2. Immediate user actions
+      3. Communication channels and timing
+      4. Key resources (FAQs, docs)
+      5. User impacts and mitigations
+      6. Stakeholder engagement approach
+
+  - id: system-incident-report
+    title: Report system incident to business users
+    category: communication
+    prompt_template:  |
+      Help me write a calming incident report to business users and IT management:
+
+      [Briefly describe incident: What happened, current status, affected users]
+
+      Include:
+
+      1. Clear, reassuring core message
+      2. Immediate actions taken
+      3. Next steps for resolution
+      4. Expected timeline
+      5. Communication frequency
+      6. Resources and support available
