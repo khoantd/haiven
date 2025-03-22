@@ -239,9 +239,14 @@ class Server:
 
     def serve_static_from_knowledge_pack(self, app):
         knowledge_pack_path = self.config_service.load_knowledge_pack_path()
-
+        
+        # Convert to absolute path if it's relative
+        if not os.path.isabs(knowledge_pack_path):
+            knowledge_pack_path = os.path.abspath(knowledge_pack_path)
+        
         teams_static_dir = Path(knowledge_pack_path + "/static")
         teams_static_dir.mkdir(parents=True, exist_ok=True)
+        
         app.mount(
             "/kp-static",
             StaticFiles(directory=teams_static_dir, html=True),

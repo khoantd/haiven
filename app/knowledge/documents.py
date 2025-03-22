@@ -132,7 +132,9 @@ class KnowledgeBaseDocuments:
         ):
             folder_path = Path(document_path).parent
             kb_path = document.metadata["path"]
+            print(f"kb_path: {kb_path}")
             kb_full_path = os.path.join(folder_path, kb_path)
+            print(f"kb_full_path: {kb_full_path}")
             knowledge_document = KnowledgeDocument(
                 context=context,
                 key=document.metadata["key"],

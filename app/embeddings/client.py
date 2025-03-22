@@ -7,6 +7,7 @@ from langchain_community.embeddings import BedrockEmbeddings, OllamaEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_openai import AzureOpenAIEmbeddings, OpenAIEmbeddings
 from embeddings.model import EmbeddingModel
+from langchain.schema import Document
 
 
 class EmbeddingsClient:
@@ -14,7 +15,7 @@ class EmbeddingsClient:
 
     def __init__(self, embedding_model: EmbeddingModel):
         self.embedding_model: EmbeddingModel = embedding_model
-        self.__text_splitter = self._load_text_splitter()
+        self.text_splitter = self._load_text_splitter()
         self.__embeddings_provider = None
 
         if self.embedding_model.provider.lower() == "openai":
@@ -98,8 +99,24 @@ class EmbeddingsClient:
         return len(tokens)
 
     def generate_from_documents(self, text, metadata):
-        chunks = self.__text_splitter.create_documents(text, metadatas=metadata)
-        return FAISS.from_documents(chunks, self.__embeddings_provider)
+        # First split the text to get chunks
+        chunks = self.text_splitter.split_text(text)
+        
+        # Create metadata list with same length as chunks
+        metadata_list = [metadata[0] if metadata else {}] * len(chunks)
+        
+        # Create documents with consistent metadata
+        documents = []
+        for i, chunk in enumerate(chunks):
+            documents.append(
+                Document(
+                    page_content=chunk,
+                    metadata=metadata_list[i]
+                )
+            )
+        
+        # Create FAISS index from documents
+        return FAISS.from_documents(documents, self.__embeddings_provider)
 
     def generate_from_filesystem(self, kb_folder_path):
         return FAISS.load_local(

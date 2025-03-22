@@ -10,6 +10,7 @@ from prompts.prompts_testing_ui import PromptsTestingUI
 from server import Server
 from config_service import ConfigService
 from disclaimer_and_guidelines import DisclaimerAndGuidelinesService
+from prompts.inspirations import InspirationsManager
 
 import gradio as gr
 
@@ -27,6 +28,10 @@ class App:
         knowledge_manager = KnowledgeManager(config_service=config_service)
 
         prompts_factory = PromptsFactory(knowledge_pack_path)
+        # Create the actual prompt lists
+        prompts_chat = prompts_factory.create_chat_prompt_list(knowledge_manager.knowledge_base_markdown)
+        prompts_guided = prompts_factory.create_guided_prompt_list(knowledge_manager.knowledge_base_markdown)
+
         disclaimer_and_guidelines = DisclaimerAndGuidelinesService(knowledge_pack_path)
         chat_session_memory = ServerChatSessionMemory()
         llm_chat_factory = ChatClientFactory(config_service)
@@ -38,17 +43,26 @@ class App:
 
         self.prompts_testing_ui = PromptsTestingUI(chat_manager)
 
+        self.config_service = config_service
+        self.disclaimer_and_guidelines = disclaimer_and_guidelines
+        self.inspirations_manager = InspirationsManager()
+
+        self.boba_api = BobaApi(
+            chat_manager=chat_manager,
+            model_config=config_service.get_chat_model(),
+            prompts_guided=prompts_guided,
+            knowledge_manager=knowledge_manager,
+            prompts_chat=prompts_chat,
+            image_service=image_service,
+            config_service=config_service,
+            disclaimer_and_guidelines=disclaimer_and_guidelines,
+            inspirations_manager=self.inspirations_manager
+        )
+
         self.server = Server(
             chat_manager,
             config_service,
-            BobaApi(
-                prompts_factory,
-                knowledge_manager,
-                chat_manager,
-                config_service,
-                image_service,
-                disclaimer_and_guidelines,
-            ),
+            self.boba_api,
         ).create()
 
     def launch_via_fastapi_wrapper(self):

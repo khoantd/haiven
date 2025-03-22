@@ -59,12 +59,20 @@ git clone git@github.com:tw-haiven/haiven-tw-demo-knowledge-pack.git
 # git clone git@github.com:tw-haiven/haiven-sample-knowledge-pack.git
 
 docker run \
-        -v ./haiven-tw-demo-knowledge-pack:/knowledge-pack \
+        -v ./haiven-sample-knowledge-pack:/knowledge-pack \
         --env-file .env \
         -e AUTH_SWITCHED_OFF=true \
         -e KNOWLEDGE_PACK_PATH=/knowledge-pack \
         -p 8080:8080 \
         ghcr.io/tw-haiven/haiven:main
+
+docker run \
+        -v ./haiven-sample-knowledge-pack:/knowledge-pack \
+        --env-file .env \
+        -e AUTH_SWITCHED_OFF=true \
+        -e KNOWLEDGE_PACK_PATH=/knowledge-pack \
+        -p 8080:8080 \
+        khoa0702/original-haiven-team-assistant:latest
 ```
 
 ### With Ollama, locally
