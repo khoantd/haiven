@@ -39,6 +39,8 @@ class ModelConfig:
             self.lite_id = "anthropic/" + self.config["model_id"]
         elif self.provider.lower() == "google":
             self.lite_id = "gemini/" + self.config["model"]
+        elif self.provider.lower() == "openai":
+            self.lite_id = "openai/" + self.config["model_name"]
         elif self.provider.lower() == "ollama":
             self.lite_id = "ollama/" + self.config["model"]
         elif self.provider.lower() == "perplexity":

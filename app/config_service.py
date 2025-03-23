@@ -206,6 +206,8 @@ class ConfigService:
             match enabled_provider:
                 case "azure":
                     default_chat_model = "azure-gpt-4o"
+                case "openai":
+                    default_chat_model = "openai-gpt-4o"
                 case "gcp":
                     default_chat_model = "google-gemini"
                 case "aws":
