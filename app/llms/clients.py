@@ -11,7 +11,7 @@ from llms.litellm_wrapper import llmCompletion
 
 
 class HaivenMessage(BaseModel):
-    content: str
+    content: str | list
 
 
 class HaivenAIMessage(HaivenMessage):
@@ -92,10 +92,12 @@ class ChatClient:
         self.model_config = model_config
 
     def _get_kwargs(self) -> dict:
+        kwargs = {}
         if self.model_config.provider == "ollama":
-            return {"api_base": os.environ.get("OLLAMA_HOST", "")}
-        else:
-            return {}
+            kwargs["api_base"] = os.environ.get("OLLAMA_HOST", "")
+        if "api_key" in self.model_config.config:
+            kwargs["api_key"] = self.model_config.config["api_key"]
+        return kwargs
 
     def stream(self, messages: List[HaivenMessage], mock: bool = False):
         json_messages = [message.to_json() for message in messages]

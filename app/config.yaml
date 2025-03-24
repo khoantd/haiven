@@ -151,6 +151,35 @@ models:
       base_url: ${OLLAMA_HOST}
       model: llava:7b
 
+  - id: cohere-command
+    name: Command on Cohere
+    provider: Cohere
+    features:
+      - text-generation
+    config:
+      model: command
+      api_key: ${COHERE_API_KEY}
+
+  - id: cohere-embed-english
+    name: Embed English on Cohere
+    provider: Cohere
+    features:
+      - embeddings
+    config:
+      model: embed-english-v3.0
+      api_key: ${COHERE_API_KEY}
+
+  - id: xai-grok-2
+    name: Grok-2 on xAI
+    provider: XAI
+    features:
+      - text-generation
+      - image-to-text
+      - stop-sequence
+    config:
+      model: grok-2-latest
+      api_key: ${XAI_API_KEY}
+
 embeddings:
   - id: text-embedding-ada-002
     name: Text Embedding Ada 002 on Azure

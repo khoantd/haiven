@@ -10,6 +10,7 @@ import {
   RiCompasses2Line,
   RiBook2Line,
   RiDashboardHorizontalLine,
+  RiInformationLine,
 } from "react-icons/ri";
 
 // Keeping the implementation of menu items for the "static" features in one place
@@ -21,6 +22,11 @@ export const initialiseMenuCategoriesForSidebar = () => {
       key: "dashboard",
       label: <Link href="/">Dashboard</Link>,
       icon: <RiDashboardHorizontalLine style={{ fontSize: "large" }} />,
+    },
+    about: {
+      key: "about",
+      label: <Link href="/boba/about">About</Link>,
+      icon: <RiInformationLine style={{ fontSize: "large" }} />,
     },
     knowledgeChat: {
       key: "knowledgeChat",
