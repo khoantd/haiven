@@ -3,6 +3,9 @@ from typing import List, Optional
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from langchain_community.vectorstores import FAISS
+from langchain_core.documents import Document
+from langchain_community.docstore.in_memory import InMemoryDocstore
+from langchain_community.embeddings import FakeEmbeddings
 
 from embeddings.base import EmbeddingsDB
 from embeddings.documents import KnowledgeDocument
@@ -50,7 +53,7 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
         # Convert document to points
         point = models.PointStruct(
             id=abs(hash(key)),  # Use absolute value of hash as point ID
-            vector=document.retriever.docstore._index_to_docstore_id[0],  # Get the first embedding vector
+            vector=document.retriever.index.reconstruct(0).tolist(),  # Convert FAISS vector to list
             payload={
                 "key": key,
                 "title": document.title,
@@ -59,9 +62,8 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
                 "description": document.description,
                 "context": document.context,
                 "provider": document.provider,
-                # Store the embeddings and texts for recreating the retriever
-                "embeddings": document.retriever.docstore._index_to_docstore_id,
-                "texts": document.retriever.docstore._docstore
+                # Store only the first text for context
+                "text": next(iter(document.retriever.docstore._dict.values())).page_content if document.retriever.docstore._dict else ""
             }
         )
         
@@ -97,17 +99,19 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
 
         point = points[0]
         
-        # Recreate the FAISS retriever from stored embeddings
-        embeddings = point.payload.get("embeddings", [])
-        texts = point.payload.get("texts", {})
-        if not embeddings or not texts:
+        # Create a minimal FAISS retriever with the stored text
+        text = point.payload.get("text", "")
+        if not text:
             return None
             
-        faiss = FAISS.from_embeddings(embeddings, list(texts.values()))
+        # Create a simple retriever with the text
+        doc = Document(page_content=text)
+        fake_embeddings = FakeEmbeddings(size=1536)  # Standard embedding size
+        index = FAISS.from_texts([text], fake_embeddings)
         
         return KnowledgeDocument(
             key=point.payload["key"],
-            retriever=faiss,
+            retriever=index,
             title=point.payload["title"],
             source=point.payload["source"],
             sample_question=point.payload["sample_question"],

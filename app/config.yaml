@@ -2,6 +2,7 @@ application_name: ${TEAMAI_APPLICATION_NAME}
 
 embeddings_db:
   type: ${EMBEDDINGS_DB_TYPE}
+  skip_import: ${SKIP_EMBEDDINGS_IMPORT}
   config:
     url: ${QDRANT_URL}
     api_key: ${QDRANT_API_KEY}
