@@ -8,8 +8,10 @@ from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 from embeddings.client import EmbeddingsClient
 from embeddings.documents import KnowledgeDocument
-from config_service import ConfigService
 from embeddings.in_memory import InMemoryEmbeddingsDB
+from config_service import ConfigService
+from embeddings.base import EmbeddingsDB
+from embeddings.factory import EmbeddingsDBFactory
 
 
 class KnowledgeBaseDocuments:
@@ -23,7 +25,7 @@ class KnowledgeBaseDocuments:
         _embeddings_provider (Embeddings): The provider used for generating embeddings.
     """
 
-    _document_stores: dict[str, InMemoryEmbeddingsDB] = None
+    _document_stores: dict[str, EmbeddingsDB] = None
 
     def __init__(
         self,
@@ -38,7 +40,12 @@ class KnowledgeBaseDocuments:
 
         if self._document_stores is None:
             self._document_stores = {}
-            self._document_stores["base"] = InMemoryEmbeddingsDB()
+            # Get database type from config, default to in_memory
+            # Get database type from config, default to in_memory
+            embeddings_db = config_service.data.get("embeddings_db", {})
+            db_type = embeddings_db.get("type", "in_memory")
+            db_config = embeddings_db.get("config", {})
+            self._document_stores["base"] = EmbeddingsDBFactory.create(db_type, **db_config)
 
     def load_documents_for_base(self, knowledge_pack_path: str) -> None:
         """
@@ -93,9 +100,15 @@ class KnowledgeBaseDocuments:
 
     def _get_or_create_embeddings_db_for_context(
         self, context: str
-    ) -> InMemoryEmbeddingsDB:
+    ) -> EmbeddingsDB:
         if context not in self._document_stores:
-            self._document_stores[context] = InMemoryEmbeddingsDB()
+            # Create new store of same type as base
+            base_store = self._document_stores["base"]
+            db_config = base_store.__dict__.get("_config", {})
+            self._document_stores[context] = EmbeddingsDBFactory.create(
+                db_type=db_config.get("type", "in_memory"),
+                **db_config.get("config", {})
+            )
 
         return self._document_stores[context]
 
@@ -117,7 +130,11 @@ class KnowledgeBaseDocuments:
         )
 
         if knowledge_document_files is not None:
-            self._document_stores[name] = InMemoryEmbeddingsDB()
+            # Create new store of same type as base
+            base_store = self._document_stores["base"]
+            # Use the same type as the base store
+            db_type = "in_memory" if isinstance(base_store, InMemoryEmbeddingsDB) else "qdrant"
+            self._document_stores[name] = EmbeddingsDBFactory.create(db_type)
 
         for knowledge_document_file in knowledge_document_files:
             self._load_document_into_store(

@@ -1,11 +1,13 @@
 # © 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
 from typing import List
 
+from embeddings.base import EmbeddingsDB
 from embeddings.documents import KnowledgeDocument
 
 
-class InMemoryEmbeddingsDB:
-    def __init__(self):
+class InMemoryEmbeddingsDB(EmbeddingsDB):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._embeddings = {}  # Dictionary to store embeddings with key as the dictionary key and embedding as the value
 
     def add_embedding(self, key: str, embedding: KnowledgeDocument):

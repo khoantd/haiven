@@ -1,5 +1,12 @@
 application_name: ${TEAMAI_APPLICATION_NAME}
 
+embeddings_db:
+  type: ${EMBEDDINGS_DB_TYPE}
+  config:
+    url: ${QDRANT_URL}
+    api_key: ${QDRANT_API_KEY}
+    collection_name: ${QDRANT_COLLECTION}
+
 knowledge_pack_path: ${KNOWLEDGE_PACK_PATH}
 
 enabled_providers: ${ENABLED_PROVIDERS}

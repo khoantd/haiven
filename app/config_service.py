@@ -15,6 +15,13 @@ import re
 class ConfigService:
     def __init__(self, path: str = "config.yaml"):
         self.data = self._load_yaml(path)
+        # Resolve config values for embeddings_db
+        embeddings_db = self.data.get("embeddings_db", {})
+        print("Initial embeddings_db:", embeddings_db)
+        if "type" in embeddings_db:
+            embeddings_db["type"] = self._replace_by_env_var(embeddings_db["type"])
+            print("Resolved embeddings_db type:", embeddings_db["type"])
+        self._resolve_config_values(embeddings_db.get("config", {}))
 
     def load_embedding_model(self) -> EmbeddingModel:
         """
@@ -190,6 +197,19 @@ class ConfigService:
 
         return default_models
 
+    def get_embeddings_db_config(self) -> dict:
+        """
+        Get the embeddings database configuration.
+        
+        Returns:
+            dict: Configuration for the embeddings database with type and config parameters
+        """
+        db_config = self.data.get("embeddings_db", {})
+        return {
+            "type": db_config.get("type", "in_memory"),
+            "config": db_config.get("config", {})
+        }
+        
     def get_default_chat_model(self) -> str:
         """
         Get the default chat model from the config file.
@@ -243,7 +263,7 @@ class ConfigService:
             except yaml.YAMLError as exc:
                 print(exc)
 
-        return _resolve_config_values(data)
+        return self._resolve_config_values(data)
 
     @staticmethod
     def _string_constructor(loader, node):
@@ -259,45 +279,47 @@ class ConfigService:
         """
         return loader.construct_scalar(node)
 
+    def _resolve_config_values(self, config: dict[str, str]):
+        load_dotenv()
+        for key, value in config.items():
+            if isinstance(value, dict):
+                self._resolve_config_values(value)
+            elif isinstance(value, list):
+                self._resolve_config_list_values(config, key, value)
+            else:
+                config[key] = self._replace_by_env_var(config[key])
+                if self._is_comma_separated_list(config[key]):
+                    config[key] = config[key].split(",")
 
-def _resolve_config_values(config: dict[str, str]):
-    load_dotenv()
-    for key, value in config.items():
-        if isinstance(value, dict):
-            _resolve_config_values(value)
-        elif isinstance(value, list):
-            _resolve_config_list_values(config, key, value)
-        else:
-            config[key] = _replace_by_env_var(config[key])
-            if _is_comma_separated_list(config[key]):
-                config[key] = config[key].split(",")
+        return config
 
-    return config
+    def _is_comma_separated_list(self, value: str) -> bool:
+        return isinstance(value, str) and "," in value
 
+    def _resolve_config_list_values(self, config, key, value):
+        list = []
+        for i, item in enumerate(value):
+            if isinstance(item, dict):
+                list.append(self._resolve_config_values(item))
+            else:
+                list.append(self._replace_by_env_var(item))
 
-def _is_comma_separated_list(value: str) -> bool:
-    return isinstance(value, str) and "," in value
+        config[key] = list
 
+    def _replace_by_env_var(self, value):
+        if value is None:
+            return value
 
-def _resolve_config_list_values(config, key, value):
-    list = []
-    for i, item in enumerate(value):
-        if isinstance(item, dict):
-            list.append(_resolve_config_values(item))
-        else:
-            list.append(_replace_by_env_var(item))
+        print("Replacing env vars in:", value)
+        # Use regex to find all ${ENV_VAR:-default} patterns and replace them with their values
+        def replace_env_var(match):
+            env_variable = match.group(1)
+            default_value = ""
+            if ":-" in env_variable:
+                env_variable, default_value = env_variable.split(":-", 1)
+            env_value = os.environ.get(env_variable, default_value)
+            print(f"Env var {env_variable} = {env_value} (default: {default_value})")
+            return env_value
 
-    config[key] = list
-
-
-def _replace_by_env_var(value):
-    if value is None:
-        return value
-
-    # Use regex to find all ${ENV_VAR} patterns and replace them with their values
-    def replace_env_var(match):
-        env_variable = match.group(1)
-        return os.environ.get(env_variable, "")
-
-    # Replace all occurrences of ${ENV_VAR} with their values
-    return re.sub(r"\${([^}]+)}", replace_env_var, value)
+        # Replace all occurrences of ${ENV_VAR} or ${ENV_VAR:-default} with their values
+        return re.sub(r"\${([^}]+)}", replace_env_var, value)
