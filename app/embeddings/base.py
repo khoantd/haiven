@@ -13,6 +13,7 @@ class EmbeddingsDB(ABC):
         Args:
             **kwargs: Configuration parameters
         """
+        print("kwargs", kwargs)
         self._config = {
             "type": kwargs.get("type") or self.__class__.__name__.lower().replace("embeddingsdb", ""),
             "config": kwargs

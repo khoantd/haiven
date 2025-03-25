@@ -42,15 +42,32 @@ class HaivenLogger:
 
     @staticmethod
     def serialize(record):
-        subset = {
-            "time": str(record["time"]),
-            "message": record["message"],
-            "level": record["level"].name,
-            "file": record["file"].path,
-        }
-        subset.update(record["extra"])
-        return json.dumps(subset)
+        try:
+            # Ensure message is treated as a plain string without formatting
+            message = str(record["message"])
+            subset = {
+                "time": str(record["time"]),
+                "message": message,
+                "level": record["level"].name,
+                "file": record["file"].path,
+                "extra": record.get("extra", None)
+            }
+            return json.dumps(subset)
+        except Exception as e:
+            # Fallback for serialization errors
+            return json.dumps({
+                "time": str(record.get("time", "")),
+                "message": f"Error serializing log: {str(e)}",
+                "level": "ERROR",
+                "file": str(record.get("file", {}).get("path", "unknown")),
+                "extra": None
+            })
 
     @staticmethod
     def patching(record):
-        record["extra"]["serialized"] = HaivenLogger.serialize(record)
+        try:
+            record["extra"] = record.get("extra", {})
+            record["extra"]["serialized"] = HaivenLogger.serialize(record)
+        except Exception as e:
+            # Fallback logging in case of serialization errors
+            print(f"Logger error: {str(e)}", file=sys.stderr)

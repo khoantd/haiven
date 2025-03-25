@@ -1,8 +1,11 @@
 # © 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
+import json
+import numpy
 from typing import List, Optional
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
 from qdrant_client.http.exceptions import UnexpectedResponse
+from embeddings.client import EmbeddingsClient
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain_community.docstore.in_memory import InMemoryDocstore
@@ -38,8 +41,14 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
         }
         super().__init__(**all_kwargs)
         
-        # Initialize Qdrant client
-        self._client = QdrantClient(url=url, api_key=api_key)
+        # Initialize Qdrant client with proper configuration
+        self._client = QdrantClient(
+            url=url,
+            api_key=api_key,
+            timeout=30.0,  # 30 second timeout
+            prefer_grpc=False,  # Use HTTP to avoid SSL issues
+            verify=True  # Enable SSL verification
+        )
         self._collection_name = collection_name
         self._embedding_size = None  # Will be set when first document is added
 
@@ -126,10 +135,13 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
             # Ensure collection exists with correct dimension
             self._ensure_collection_exists(dimension)
             
+            # Get document vector
+            vector = document.retriever.index.reconstruct(0).tolist()
+            
             # Convert document to point
             point = models.PointStruct(
                 id=abs(hash(key)),  # Use absolute value of hash as point ID
-                vector=document.retriever.index.reconstruct(0).tolist(),
+                vector=vector,
                 payload={
                     "key": key,
                     "title": document.title,
@@ -138,7 +150,8 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
                     "description": document.description,
                     "context": document.context,
                     "provider": document.provider,
-                    "text": next(iter(document.retriever.docstore._dict.values())).page_content if document.retriever.docstore._dict else ""
+                    "text": next(iter(document.retriever.docstore._dict.values())).page_content if document.retriever.docstore._dict else "",
+                    "vector": vector  # Store vector in payload for retrieval
                 }
             )
             
@@ -179,25 +192,47 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
 
             point = points[0]
             
-            # Create a minimal FAISS retriever with the stored text
-            text = point.payload.get("text", "")
+            # Get text content and ensure it's a string
+            text = point.payload.get("text")
             if not text:
+                print(f"Warning: Point {getattr(point, 'id', 'unknown')} has no text content")
                 return None
+
+            # Convert text content to string
+            if isinstance(text, (dict, list)):
+                text = json.dumps(text)  # Better handling for structured data
+            elif not isinstance(text, str):
+                text = str(text)
                 
             # Create a simple retriever with the text
             doc = Document(page_content=text)
-            fake_embeddings = FakeEmbeddings(size=len(point.vector))  # Use actual vector size
+            
+            # Handle vector data
+            vector = getattr(point, 'vector', None)
+            if vector is None:
+                print(f"Warning: Point {getattr(point, 'id', 'unknown')} has no vector, using default size")
+                vector_size = 1536  # Default OpenAI embedding size
+            else:
+                try:
+                    vector_size = len(vector)
+                except Exception as vec_error:
+                    print(f"Error getting vector size: {str(vec_error)}, using default")
+                    vector_size = 1536
+                    
+            fake_embeddings = FakeEmbeddings(size=vector_size)
             index = FAISS.from_texts([text], fake_embeddings)
             
+            # Get metadata with defaults
+            point_id = getattr(point, 'id', 'unknown')
             return KnowledgeDocument(
-                key=point.payload["key"],
+                key=point.payload.get("key", str(point_id)),
                 retriever=index,
-                title=point.payload["title"],
-                source=point.payload["source"],
-                sample_question=point.payload["sample_question"],
-                description=point.payload["description"],
-                context=point.payload["context"],
-                provider=point.payload["provider"]
+                title=point.payload.get("title", f"Document {point_id}"),
+                source=point.payload.get("source", "Unknown"),
+                sample_question=point.payload.get("sample_question", ""),
+                description=point.payload.get("description", ""),
+                context=point.payload.get("context", "base"),
+                provider=point.payload.get("provider", "Unknown")
             )
             
         except Exception as e:
@@ -210,30 +245,88 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
             List of all KnowledgeDocument instances
         """
         try:
-            points = self._client.scroll(
-                collection_name=self._collection_name,
-                limit=100  # Consider implementing pagination for large collections
-            )[0]
+            try:
+                scroll_result = self._client.scroll(
+                    collection_name=self._collection_name,
+                    limit=100,  # Consider implementing pagination for large collections
+                    with_payload=True,
+                    with_vectors=True
+                )
+                
+                if not scroll_result or len(scroll_result) < 1:
+                    print(f"Warning: No points found in collection {self._collection_name}")
+                    return []
+                    
+                points = scroll_result[0]
+            except Exception as scroll_error:
+                print(f"Error during scroll operation: {str(scroll_error)}")
+                return []
 
             documents = []
             for point in points:
-                # Create a minimal FAISS retriever with the stored text
-                text = point.payload.get("text", "")
-                if text:
-                    doc = Document(page_content=text)
-                    fake_embeddings = FakeEmbeddings(size=len(point.vector))
+                try:
+                    # Validate point has required data
+                    if not hasattr(point, 'payload') or not point.payload:
+                        print(f"Warning: Point {getattr(point, 'id', 'unknown')} has no payload")
+                        continue
+                        
+                    # Get text content and ensure it's a string
+                    text = point.payload.get("text")
+                    if not text:
+                        print(f"Warning: Point {getattr(point, 'id', 'unknown')} has no text content")
+                        continue
+
+                    # Convert text content to string
+                    if isinstance(text, (dict, list)):
+                        text = json.dumps(text)  # Better handling for structured data
+                    elif not isinstance(text, str):
+                        text = str(text)
+
+                    # Create document with FAISS retriever
+                    # Get metadata from payload
+                    metadata = {
+                        "key": point.payload.get("key", str(getattr(point, 'id', 'unknown'))),
+                        "title": point.payload.get("title", ""),
+                        "source": point.payload.get("source", ""),
+                        "sample_question": point.payload.get("sample_question", ""),
+                        "description": point.payload.get("description", ""),
+                        "context": point.payload.get("context", "base"),
+                        "provider": point.payload.get("provider", "Unknown")
+                    }
+                    
+                    # Create document with text content and metadata
+                    doc = Document(page_content=text, metadata=metadata)
+                    
+                    # Handle vector data
+                    vector = getattr(point, 'vector', None)
+                    if vector is None:
+                        print(f"Warning: Point {getattr(point, 'id', 'unknown')} has no vector, using default size")
+                        vector_size = 1536  # Default OpenAI embedding size
+                    else:
+                        try:
+                            vector_size = len(vector)
+                        except Exception as vec_error:
+                            print(f"Error getting vector size: {str(vec_error)}, using default")
+                            vector_size = 1536
+                        
+                    fake_embeddings = FakeEmbeddings(size=vector_size)
                     index = FAISS.from_texts([text], fake_embeddings)
                     
+                    # Create KnowledgeDocument with FAISS retriever and metadata
                     documents.append(KnowledgeDocument(
-                        key=point.payload["key"],
                         retriever=index,
-                        title=point.payload["title"],
-                        source=point.payload["source"],
-                        sample_question=point.payload["sample_question"],
-                        description=point.payload["description"],
-                        context=point.payload["context"],
-                        provider=point.payload["provider"]
+                        key=metadata["key"],
+                        title=metadata["title"],
+                        source=metadata["source"],
+                        sample_question=metadata["sample_question"],
+                        description=metadata["description"],
+                        context=metadata["context"],
+                        provider=metadata["provider"]
                     ))
+                except Exception as doc_error:
+                    # Log error but continue processing other documents
+                    print(f"Error processing document {getattr(point, 'id', 'unknown')}: {str(doc_error)}")
+                    continue
             
             return documents
             
@@ -257,3 +350,88 @@ class QdrantEmbeddingsDB(EmbeddingsDB):
             
         except Exception as e:
             raise ValueError(f"Failed to get keys from Qdrant: {str(e)}")
+            
+    def similarity_search(self, query: str, k: int = 5, score_threshold: float = None) -> List[KnowledgeDocument]:
+        """Perform similarity search across all documents.
+        
+        Args:
+            query: Search query
+            k: Number of results to return
+            score_threshold: Minimum similarity score threshold
+            
+        Returns:
+            List of matching KnowledgeDocument instances
+        """
+        try:
+            # Get embeddings for query
+            query_vector = self._embeddings_provider.embed_query(query)
+            
+            # Search in Qdrant
+            search_result = self._client.search(
+                collection_name=self._collection_name,
+                query_vector=query_vector,
+                limit=k,
+                score_threshold=score_threshold,
+                with_payload=True,
+                with_vectors=True
+            )
+            
+            # Convert results to documents
+            documents = []
+            for point in search_result:
+                try:
+                    # Get text content and ensure it's a string
+                    text = point.payload.get("text")
+                    if not text:
+                        print(f"Warning: Point {getattr(point, 'id', 'unknown')} has no text content")
+                        continue
+
+                    # Convert text content to string
+                    if isinstance(text, (dict, list)):
+                        text = json.dumps(text)  # Better handling for structured data
+                    elif not isinstance(text, str):
+                        text = str(text)
+                        
+                    # Create a simple retriever with the text
+                    doc = Document(page_content=text)
+                    
+                    # Get vector from payload or point
+                    vector = point.payload.get("vector") or getattr(point, 'vector', None)
+                    if vector is None:
+                        print(f"Warning: Point {getattr(point, 'id', 'unknown')} has no vector, using default size")
+                        vector_size = 1536  # Default OpenAI embedding size
+                    else:
+                        try:
+                            vector_size = len(vector)
+                        except Exception as vec_error:
+                            print(f"Error getting vector size: {str(vec_error)}, using default")
+                            vector_size = 1536
+                            
+                    # Create FAISS index with vector
+                    fake_embeddings = FakeEmbeddings(size=vector_size)
+                    index = FAISS.from_texts([text], fake_embeddings)
+                    if vector is not None:
+                        # Replace the default vector with the stored one
+                        index.index.reset()
+                        index.index.add(numpy.array([vector]))
+                    
+                    # Get metadata with defaults
+                    point_id = getattr(point, 'id', 'unknown')
+                    documents.append(KnowledgeDocument(
+                        key=point.payload.get("key", str(point_id)),
+                        retriever=index,
+                        title=point.payload.get("title", f"Document {point_id}"),
+                        source=point.payload.get("source", "Unknown"),
+                        sample_question=point.payload.get("sample_question", ""),
+                        description=point.payload.get("description", ""),
+                        context=point.payload.get("context", "base"),
+                        provider=point.payload.get("provider", "Unknown")
+                    ))
+                except Exception as doc_error:
+                    print(f"Error processing search result {getattr(point, 'id', 'unknown')}: {str(doc_error)}")
+                    continue
+                    
+            return documents
+            
+        except Exception as e:
+            raise ValueError(f"Failed to perform similarity search: {str(e)}")

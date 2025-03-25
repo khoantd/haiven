@@ -32,6 +32,7 @@ class KnowledgeManager:
 
     def _load_base_markdown_knowledge(self):
         knowledge_base_markdown = KnowledgeBaseMarkdown()
+        print("self.knowledge_pack_definition.path:",self.knowledge_pack_definition.path)
         try:
             knowledge_base_markdown.load_for_base(self.knowledge_pack_definition.path)
         except FileNotFoundError as error:
@@ -39,6 +40,8 @@ class KnowledgeManager:
                 str(error), extra={"ERROR": "KnowledgePackKnowledgeNotFound"}
             )
 
+        print("knowledge_base_markdown.get_all_contexts_metadata():",knowledge_base_markdown.get_all_contexts_metadata())
+        
         return knowledge_base_markdown
 
     def _load_base_documents_knowledge(self):

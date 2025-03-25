@@ -292,6 +292,8 @@ class ApiBasics(HaivenBaseApi):
                 # But we're still loading the ones from contexts as well, for backwards compatibility with
                 # older knowledge packs
                 all_contexts = knowledge_manager.get_all_context_keys()
+                
+                print("all_contexts", all_contexts)
 
                 # Extract just the context keys and append base_context
                 context_keys = [context["context"] for context in all_contexts]

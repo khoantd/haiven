@@ -137,6 +137,7 @@ class KnowledgeBaseDocuments:
         if knowledge_document_files is not None:
             # Create new store of same type as base
             base_store = self._document_stores["base"]
+            print("base_store", base_store._config["type"])
             # Use the same type and configuration as the base store
             db_type = base_store._config["type"]
             # Get the configuration from the base store
@@ -144,6 +145,7 @@ class KnowledgeBaseDocuments:
             del db_config["type"]  # Remove type as it's passed separately
             
             # Create new store with same config
+            print("db_type", db_type)
             self._document_stores[name] = EmbeddingsDBFactory.create(db_type, **db_config)
 
         for knowledge_document_file in knowledge_document_files:

@@ -11,7 +11,8 @@ class EmbeddingsDBFactory:
     
     _db_types: Dict[str, Type[EmbeddingsDB]] = {
         "in_memory": InMemoryEmbeddingsDB,
-        "qdrant": QdrantEmbeddingsDB
+        "qdrant": QdrantEmbeddingsDB,
+        "inmemory": InMemoryEmbeddingsDB
     }
     
     @classmethod
