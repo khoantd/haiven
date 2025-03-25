@@ -34,4 +34,12 @@ class EmbeddingsDBFactory:
                            f"Supported types are: {list(cls._db_types.keys())}")
             
         db_class = cls._db_types[db_type]
+        
+        # For Qdrant, ensure required config is present
+        if db_type == "qdrant":
+            if "url" not in kwargs:
+                kwargs["url"] = "http://localhost:6333"  # Default URL
+            if "collection_name" not in kwargs:
+                kwargs["collection_name"] = "knowledge"  # Default collection
+        
         return db_class(**kwargs)

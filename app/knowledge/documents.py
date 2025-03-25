@@ -138,9 +138,12 @@ class KnowledgeBaseDocuments:
             # Create new store of same type as base
             base_store = self._document_stores["base"]
             # Use the same type and configuration as the base store
-            db_type = "in_memory" if isinstance(base_store, InMemoryEmbeddingsDB) else "qdrant"
-            # Get the configuration from the base store if it's a Qdrant store
-            db_config = base_store._config["config"] if isinstance(base_store, QdrantEmbeddingsDB) else {}
+            db_type = base_store._config["type"]
+            # Get the configuration from the base store
+            db_config = base_store._config.copy()
+            del db_config["type"]  # Remove type as it's passed separately
+            
+            # Create new store with same config
             self._document_stores[name] = EmbeddingsDBFactory.create(db_type, **db_config)
 
         for knowledge_document_file in knowledge_document_files:
@@ -169,8 +172,12 @@ class KnowledgeBaseDocuments:
             )
 
             store_for_context = self._get_or_create_embeddings_db_for_context(context)
-
-            store_for_context.add_embedding(knowledge_document.key, knowledge_document)
+            # if db_type is "in_memory", use add_embedding. Otherwise, skip add_embedding
+            if isinstance(store_for_context, InMemoryEmbeddingsDB):
+                store_for_context.add_embedding(knowledge_document.key, knowledge_document)
+            else:
+                # store_for_context.add_embedding(knowledge_document.key, knowledge_document)
+                pass
 
     def similarity_search_with_scores(
         self, query: str, k: int = 5, score_threshold: float = None

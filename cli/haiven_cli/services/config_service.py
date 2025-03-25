@@ -5,6 +5,8 @@ from typing import List
 import yaml
 from dotenv import load_dotenv
 from haiven_cli.models.embedding_model import EmbeddingModel
+from haiven_cli.models.config_model import VectorStoreConfig
+from haiven_cli.services.vector_store_service import VectorStoreService, FAISSVectorStore, QdrantVectorStore
 
 
 class ConfigService:
@@ -35,6 +37,39 @@ class ConfigService:
             embeddings.append(embedding)
 
         return embeddings
+
+    def load_vector_store_config(self, path: str = "config.yaml") -> VectorStoreConfig:
+        """
+        Load vector store configuration from a YAML config file.
+
+        Args:
+            path (str): The path to the YAML file.
+
+        Returns:
+            VectorStoreConfig: The vector store configuration
+        """
+        data = _load_yaml(path, self.env_file_path)
+        vector_store_data = data.get("vector_store", {"type": "faiss"})
+        return VectorStoreConfig.from_dict(vector_store_data)
+
+    def create_vector_store_service(self, path: str = "config.yaml") -> VectorStoreService:
+        """
+        Create a vector store service based on configuration.
+
+        Args:
+            path (str): The path to the YAML file.
+
+        Returns:
+            VectorStoreService: The configured vector store service
+        """
+        config = self.load_vector_store_config(path)
+        if config.type == "qdrant":
+            settings = config.settings or {}
+            return QdrantVectorStore(
+                url=settings.get("url", "http://localhost:6333"),
+                collection_name=settings.get("collection_name", "haiven")
+            )
+        return FAISSVectorStore()  # Default to FAISS
 
 
 def _load_yaml(path: str, env_file_path: str) -> dict:

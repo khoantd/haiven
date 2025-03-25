@@ -205,10 +205,15 @@ class ConfigService:
             dict: Configuration for the embeddings database with type and config parameters
         """
         db_config = self.data.get("embeddings_db", {})
-        return {
+        config = {
             "type": db_config.get("type", "in_memory"),
-            "config": db_config.get("config", {})
         }
+        
+        # If there's additional configuration, add it to the kwargs
+        if "config" in db_config:
+            config.update(db_config["config"])
+            
+        return config
         
     def get_default_chat_model(self) -> str:
         """

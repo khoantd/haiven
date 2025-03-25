@@ -80,6 +80,45 @@ For each file in the source directory a markdown file and a .kb folder should be
       └── file1.kb
 ```
 
+## Vector Store Configuration
+
+By default, HAIVEN uses FAISS as the vector store. You can configure it to use Qdrant instead by adding the following to your config.yaml:
+
+```yaml
+vector_store:
+  type: "qdrant"
+  settings:
+    url: "http://localhost:6333"  # Your Qdrant server URL
+    collection_name: "haiven"     # Optional, defaults to "haiven"
+
+# Your existing configuration...
+embeddings:
+  - id: "text-embedding-ada-002"
+    name: "Ada"
+    provider: "OpenAI"
+    config:
+      api_key: "${OPENAI_API_KEY}"
+```
+
+### Setting up Qdrant
+
+1. Install Qdrant using Docker:
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+```
+
+2. Or install the standalone server:
+```bash
+curl -L https://github.com/qdrant/qdrant/releases/latest/download/qdrant-x86_64-unknown-linux-gnu.tar.gz | tar xz
+./qdrant
+```
+
+3. Install the Python client:
+```bash
+pip install qdrant-client
+```
+
+The vector store configuration will be used for all indexing operations. You can switch between FAISS and Qdrant by updating the configuration file.
 
 ___
 # `haiven-cli`

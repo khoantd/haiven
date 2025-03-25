@@ -154,7 +154,12 @@ def set_env_path(
 
 def create_app(config_service: ConfigService):
     token_service = TokenService(ENCODING)
-    knowledge_service = KnowledgeService(token_service, EmbeddingService)
+    vector_store_service = config_service.create_vector_store_service()
+    knowledge_service = KnowledgeService(
+        token_service, 
+        EmbeddingService,
+        vector_store_service
+    )
     app = App(
         config_service,
         FileService(),
