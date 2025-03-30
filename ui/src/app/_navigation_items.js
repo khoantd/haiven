@@ -23,11 +23,11 @@ export const initialiseMenuCategoriesForSidebar = () => {
       label: <Link href="/">Dashboard</Link>,
       icon: <RiDashboardHorizontalLine style={{ fontSize: "large" }} />,
     },
-    about: {
-      key: "about",
-      label: <Link href="/boba/about">About</Link>,
-      icon: <RiInformationLine style={{ fontSize: "large" }} />,
-    },
+    // about: {
+    //   key: "about",
+    //   label: <Link href="/boba/about">About</Link>,
+    //   icon: <RiInformationLine style={{ fontSize: "large" }} />,
+    // },
     knowledgeChat: {
       key: "knowledgeChat",
       label: <Link href="/knowledge-chat">Chat with Haiven</Link>,
