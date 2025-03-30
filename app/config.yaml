@@ -188,6 +188,16 @@ models:
       model: grok-2-latest
       api_key: ${XAI_API_KEY}
 
+  - id: perplexity-sonar-pro
+    name: Sonar Pro on Perplexity
+    provider: Perplexity
+    features:
+      - text-generation
+      - stop-sequence
+    config:
+      model: sonar-pro
+      api_key: ${PERPLEXITY_API_KEY}
+
 embeddings:
   - id: text-embedding-ada-002
     name: Text Embedding Ada 002 on Azure

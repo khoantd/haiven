@@ -59,8 +59,9 @@ class ConfigService:
         Returns:
             List[ModelConfig]: The loaded models.
         """
-
+        print("Loading enabled models with features:", features)
         model_data_list = self.data["models"]
+        print("All models in config:", model_data_list)
         models = []
 
         for model_data in model_data_list:
@@ -68,9 +69,10 @@ class ConfigService:
             models.append(model)
 
         filtered_models = copy.deepcopy(models)
-
         providers = self.load_enabled_providers()
+        print("Enabled providers:", providers)
 
+        # Only filter by providers if there are enabled providers
         if providers and len(providers) > 0:
             filtered_models = [
                 model
@@ -80,7 +82,9 @@ class ConfigService:
                     for model_provider in providers
                 )
             ]
+            print("Models after provider filtering:", [model.id for model in filtered_models])
 
+        # Filter by features if specified
         if features and len(features) > 0:
             filtered_models = [
                 model
@@ -91,6 +95,7 @@ class ConfigService:
                     for feature in features
                 )
             ]
+            print("Models after feature filtering:", [model.id for model in filtered_models])
 
         return filtered_models
 
@@ -104,11 +109,25 @@ class ConfigService:
         Returns:
             ModelConfig: The model.
         """
+        print("Loading model with ID:", model_id)
+        print("Available models in config:", self.data["models"])
+        
+        # First try to find the model in all available models
+        all_models = [ModelConfig.from_dict(model_data) for model_data in self.data["models"]]
+        model = next((model for model in all_models if model.id == model_id), None)
+        
+        if model is not None:
+            print(f"Found model {model_id} in all available models")
+            return model
+            
+        # If not found, try in enabled models
+        print("Model not found in all models, checking enabled models...")
         models = self.load_enabled_models()
+        print("Enabled models:", [model.id for model in models])
         model = next((model for model in models if model.id == model_id), None)
-
+        
         if model is None:
-            raise ValueError(f"Model with ID {model_id} not found")
+            raise ValueError(f"Model with ID {model_id} not found in available or enabled models")
 
         return model
 
@@ -172,13 +191,20 @@ class ConfigService:
 
         Returns:
             List[str]: The list of enabled providers.
-
         """
-
         enabled_providers = self.data["enabled_providers"]
+        print("Raw enabled providers:", enabled_providers)
 
         if isinstance(enabled_providers, str):
-            enabled_providers = enabled_providers.split(",")
+            # Handle environment variable format ${VAR_NAME}
+            if enabled_providers.startswith("${") and enabled_providers.endswith("}"):
+                env_var = enabled_providers[2:-1]
+                enabled_providers = os.getenv(env_var, "")
+                print("Resolved from env var:", env_var, "=", enabled_providers)
+            
+            # Split into list
+            enabled_providers = [p.strip() for p in enabled_providers.split(",") if p.strip()]
+            print("Final enabled providers:", enabled_providers)
 
         return enabled_providers
 
@@ -233,6 +259,8 @@ class ConfigService:
                     default_chat_model = "azure-gpt-4o"
                 case "openai":
                     default_chat_model = "openai-gpt-4o"
+                case "perplexity":
+                    default_chat_model = "perplexity-sonar-pro"
                 case "gcp":
                     default_chat_model = "google-gemini"
                 case "aws":

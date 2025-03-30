@@ -84,4 +84,5 @@ class BobaApi:
             self.chat_manager,
             self.model_config,
             self.prompts_guided,
+            self.config_service,
         )

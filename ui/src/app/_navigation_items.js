@@ -37,7 +37,12 @@ export const initialiseMenuCategoriesForSidebar = () => {
       key: "research",
       label: "Research",
       icon: <RiBook2Line style={{ fontSize: "large" }} />,
-      children: [],
+      children: [
+        {
+          key: "company-research",
+          label: <Link href="/company-research">Company Research</Link>,
+        },
+      ],
     },
     ideate: {
       key: "ideate",
@@ -89,6 +94,15 @@ export const initialiseMenuCategoriesForSidebar = () => {
 
 export const staticFeaturesForDashboard = () => {
   return [
+    {
+      identifier: "boba-company-research",
+      title: "Company Research",
+      help_prompt_description:
+        "Research companies and AI tools to understand their business context, competitors, and domain functions.",
+      categories: ["research"],
+      type: "static",
+      link: "/company-research",
+    },
     {
       identifier: "boba-creative-matrix",
       title: "Creative Matrix",

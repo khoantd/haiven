@@ -2,6 +2,7 @@
 from fastapi import Request
 from api.api_basics import HaivenBaseApi
 from llms.model_config import ModelConfig
+from config_service import ConfigService
 
 CONFIG_TO_PROMPT_MAPPING = {
     "company": "guided-company-research",
@@ -10,8 +11,9 @@ CONFIG_TO_PROMPT_MAPPING = {
 
 
 class ApiCompanyResearch(HaivenBaseApi):
-    def __init__(self, app, chat_session_memory, model_key, prompt_list):
+    def __init__(self, app, chat_session_memory, model_key, prompt_list, config_service: ConfigService):
         super().__init__(app, chat_session_memory, model_key, prompt_list)
+        self.config_service = config_service
 
         @app.post("/api/research")
         async def company_research(request: Request):
@@ -32,9 +34,8 @@ class ApiCompanyResearch(HaivenBaseApi):
                 warnings=[],
             )
 
-            perplexity_model_config = ModelConfig(
-                "perplexity", "perplexity", "Perplexity"
-            )
+            # Get the Perplexity model configuration from config.yaml
+            perplexity_model_config = self.config_service.get_model("perplexity-sonar-pro")
 
             return self.stream_json_chat(
                 prompt,
