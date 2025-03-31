@@ -36,7 +36,10 @@ export default function CompanyResearchPage() {
     company: {
       title: "Company Research",
       key: "company",
-      column1: [{ title: "Business Snapshot", property: "business_brief" }],
+      column1: [
+        { title: "Business Snapshot", property: "business_brief" },
+        { title: "Business Model Canvas", property: "business_model_canvas" }
+      ],
       column2: [
         { title: "Vision & Strategic Priorities", property: "org_priorities" },
         { title: "Competitors", property: "competitors" },

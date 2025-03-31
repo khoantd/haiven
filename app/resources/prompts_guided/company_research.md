@@ -26,21 +26,31 @@ I want you to analyze the company {user_input}.
     - Cost Structure
     - Digital Channels
     - Key Acquisitions (with year)
-  2. Competitors:
+  2. Business Model Canvas:
+    - Key partners
+    - Key Activities
+    - Value Propositions
+    - Customer Relationships
+    - Customer Segments
+    - Key Resources
+    - Channels
+    - Cost Structure
+    - Revenue Streams
+  3. Competitors:
     - Name
     - Rationale
     - Key Acquisitions (with year)
-  3. Organizational priorities:
+  4. Organizational priorities:
     - Company Vision
     - Priorities for this year
     - KPIs
-  4. Domain functions:
+  5. Domain functions:
     - Function name
     - Function description
     - Key KPI for that function
     - Key Use Cases of the function
     - Key related systems
-  5. Domain terms:
+  6. Domain terms:
     - Term
     - Acronym
     - Meaning
@@ -57,6 +67,17 @@ I want you to analyze the company {user_input}.
       - cost_structure: <array of strings>
       - digital_channels: <array of strings>
       - key_acquisitions: <array of strings>
+
+    - business_model_canvas: 
+      - key_partners: <object containing the following keys:>
+      - key_activities: <array of strings>
+      - value_propositions: <array of strings>
+      - customer_relationships: <array of strings>
+      - customer_segments: <array of strings>
+      - key_resources: <array of strings>
+      - channels: <array of strings>
+      - cost_structure: <array of strings>
+      - revenue_streams: <array of strings>
   
     - org_priorities: <object containing the following keys:>
       - vision: <object containing the following keys:>
