@@ -42,6 +42,10 @@ export const initialiseMenuCategoriesForSidebar = () => {
           key: "company-research",
           label: <Link href="/company-research">Company Research</Link>,
         },
+        {
+          key: "ai-tool-research",
+          label: <Link href="/company-research?config=ai-tool">AI Tool Research</Link>,
+        },
       ],
     },
     ideate: {
@@ -102,6 +106,15 @@ export const staticFeaturesForDashboard = () => {
       categories: ["research"],
       type: "static",
       link: "/company-research",
+    },
+    {
+      identifier: "boba-ai-tool-research",
+      title: "AI Tool Research",
+      help_prompt_description:
+        "Research AI tools specifically for software delivery teams, including their features, maturity, and market position.",
+      categories: ["research"],
+      type: "static",
+      link: "/company-research?config=ai-tool",
     },
     {
       identifier: "boba-creative-matrix",
