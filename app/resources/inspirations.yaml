@@ -154,3 +154,17 @@ inspirations:
         3. Scalability, security, and maintainability concerns  
         4. Alignment with business goals
         5. Optional: A simple diagram or bullet-point outline of the architecture
+
+  - id: impacts-of-system-changes
+    title: Identify impacts of system change of a system to existing systems
+    category: analysis
+    prompt_template: |
+      Help me identify the impacts of the following changes on the software architecture:
+
+        [Insert changes here]
+
+        Include:
+        1. Business impacts (efficiency, cost, revenue, risk)
+        2. Effects on user experience across systems
+        3. Operational changes or adjustments required
+        4. Dependencies or cascading impacts on integrated systems
