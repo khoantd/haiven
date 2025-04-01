@@ -33,12 +33,12 @@ export default function CompanyResearchPage() {
   const [disableInput, setDisableInput] = useState(false);
 
   const availableResearchConfig = {
-    company: {
+    "company": {
       title: "Company Research",
       key: "company",
       column1: [
         { title: "Business Snapshot", property: "business_brief" },
-        { title: "Business Model Canvas", property: "business_model_canvas" }
+        { title: "Business Model", property: "business_model_canvas" }
       ],
       column2: [
         { title: "Vision & Strategic Priorities", property: "org_priorities" },

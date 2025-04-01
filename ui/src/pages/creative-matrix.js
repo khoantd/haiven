@@ -71,6 +71,45 @@ const CreativeMatrix = ({ models }) => {
       rowsCSV: "Row 1, Row 2, Row 3",
       columnsCSV: "Column 1, Column 2, Column 3",
     },
+    {
+      name: "Template: R&D Strategy & Value Chain Evolution",
+      prompt: "Generate a comprehensive R&D strategy framework with aligned value chain stages and potential evolutions for a [startup/enterprise/industry]. Focus on key R&D priorities, capabilities, and innovation levers over time.",
+      rowsCSV: "Business Goals, R&D Objectives, Key Capabilities, Technology Enablers, Talent & Organization, Strategic Partners",
+      columnsCSV: "Discovery & Ideation, Proof of Concept, MVP Development, Productization, Scaling & Optimization, Long-term Innovation"
+    },
+    {
+      name: "Template: R&D Strategy Across Innovation Lifecycle",
+      prompt:
+        "Inspire me with strategic R&D initiatives and priorities across the innovation lifecycle for a company or startup in any industry",
+      rowsCSV: "Strategic Objectives, Core Technologies, Talent & Skills, Organizational Capabilities, Key Metrics, External Collaborations",
+      columnsCSV:
+        "Opportunity Scouting, Concept Development, Prototyping & Validation, Product Development, Go-to-Market Preparation, Continuous Improvement",
+    },
+    {
+      name: "Template: R&D Value Chain Use Cases",
+      prompt:
+        "Inspire me with key activities, capabilities, and enablers across the R&D value chain for a company, startup, or enterprise in any industry",
+      rowsCSV:
+        "Scientific Research, Technology Development, Product Innovation, Process Engineering, Knowledge Management, Regulatory & IP Management",
+      columnsCSV:
+        "Idea Generation, Research Planning, Experimentation & Prototyping, Validation & Testing, Integration & Transfer, Commercialization Readiness",
+    },
+    {
+      name: "Template: Business Model Canvas Inspiration",
+      prompt:
+        "Inspire me with innovative business model elements across the Business Model Canvas for any company, startup, or enterprise in any industry",
+      rowsCSV: "Startup, Scale-up, Enterprise",
+      columnsCSV:
+        "Customer Segments, Value Propositions, Channels, Customer Relationships, Revenue Streams, Key Resources, Key Activities, Key Partnerships, Cost Structure",
+    },
+    {
+      name: "Template: Strategic Planning Matrix",
+      prompt:
+        "Inspire me with strategic priorities, initiatives, and goals for building a comprehensive business strategic plan for any company, startup, or enterprise in any industry",
+      rowsCSV: "Startup, Scale-up, Enterprise",
+      columnsCSV:
+        "Vision & Mission, Market Positioning, Customer Strategy, Product & Services, Go-to-Market Strategy, Operations & Delivery, Financial Model, People & Culture, Technology & Innovation"
+    }
   ]);
 
   const onChangeRowsCSV = (e) => {
@@ -129,7 +168,7 @@ const CreativeMatrix = ({ models }) => {
 
   const onSubmitPrompt = () => {
     setIsExpanded(false);
-    setDisableChatInput(true);
+    setDisableChatInput(false);
     setPrompt("");
     setPromptOptionsMenuExpanded(false);
 
