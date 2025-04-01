@@ -137,5 +137,20 @@ inspirations:
       Analyze:
       1. User journey steps
       2. Potential pain points
-      3. Cognitive load      4. Improvement suggestions 
-    
+      3. Cognitive load      
+      4. Improvement suggestions
+
+  - id: requirements-to-architecture-design
+      title: Identify and improve friction points in user flows
+      category: design
+      prompt_template: |
+        Help me convert the following business requirements into a high-level software architecture design:
+
+        [Insert business requirements here]
+
+        Include:
+        1. Core components and their responsibilities
+        2. Key data flows and integrations
+        3. Scalability, security, and maintainability concerns  
+        4. Alignment with business goals
+        5. Optional: A simple diagram or bullet-point outline of the architecture
