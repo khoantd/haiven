@@ -141,10 +141,10 @@ inspirations:
       4. Improvement suggestions
 
   - id: requirements-to-architecture-design
-      title: Identify and improve friction points in user flows
-      category: design
-      prompt_template: |
-        Help me convert the following business requirements into a high-level software architecture design:
+    title: Convert business requirements into a high-level software architecture design
+    category: design
+    prompt_template: |
+      Help me convert the following business requirements into a high-level software architecture design:
 
         [Insert business requirements here]
 
