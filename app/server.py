@@ -119,6 +119,7 @@ class Server:
                 "creative-matrix",
                 "about",
                 "company-research",
+                "business-strategy",
             ]
             paths = request.url.path.split("/")
             if (
