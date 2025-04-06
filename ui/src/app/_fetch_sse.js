@@ -27,6 +27,22 @@ const isAbortError = (error) => {
   );
 };
 
+const cleanJsonResponse = (response) => {
+  // Remove markdown code block markers and any text before/after JSON
+  let cleaned = response.replace(/```(?:json)?\n?/g, '').replace("json", "");
+  // Find the first '[' or '{' character
+  const jsonStart = cleaned.search(/[\[{]/);
+  if (jsonStart !== -1) {
+    cleaned = cleaned.slice(jsonStart);
+    // Find the last ']' or '}' character
+    const jsonEnd = cleaned.split('').reverse().findIndex(char => char === ']' || char === '}');
+    if (jsonEnd !== -1) {
+      cleaned = cleaned.slice(0, cleaned.length - jsonEnd);
+    }
+  }
+  return cleaned.trim();
+};
+
 /*
  Implementation of event stream client that is more flexible in terms
  of taking different HTTP methods, headers etc - basically the full power of fetch()
@@ -60,6 +76,7 @@ export const fetchSSE = async (uri, fetchOptions, options) => {
   }
 
   const data = response.body;
+  console.log("data", data);
 
   if (!data) return;
 
@@ -93,9 +110,15 @@ export const fetchSSE = async (uri, fetchOptions, options) => {
           );
           const chunks = chunkable.split(SPLIT_DELIMITER);
           chunks.forEach((value) => {
-            const data = JSON.parse(value);
-            checkIsErrorMessage(data.data || "");
-            options.onMessageHandle?.(data, response);
+            try {
+              const cleanedValue = cleanJsonResponse(value);
+              const data = JSON.parse(cleanedValue);
+              checkIsErrorMessage(data.data || "");
+              options.onMessageHandle?.(data, response);
+            } catch (error) {
+              console.log("JSON parse error:", error, "for value:", value);
+              options.onErrorHandle?.(error);
+            }
           });
         }
       } else {
