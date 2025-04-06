@@ -1,4 +1,5 @@
 # © 2024 Thoughtworks, Inc. | Licensed under the Apache License, Version 2.0  | See LICENSE.md file for permissions.
+from knowledge_manager import KnowledgeManager
 from api.api_basics import HaivenBaseApi
 from fastapi import FastAPI
 from llms.chats import ChatManager

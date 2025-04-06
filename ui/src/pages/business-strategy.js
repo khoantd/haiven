@@ -35,6 +35,7 @@ import ChatHeader from "../pages/_chat_header";
 import { DynamicDataRenderer } from "../app/_dynamic_data_renderer";
 import DocumentChoice from "../app/_document_choice";
 import { getSortedUserDocuments, getSummaryForTheUserDocument } from "../app/_local_store";
+import { getDocuments } from "../app/_boba_api";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -47,7 +48,7 @@ export default function BusinessStrategyPage() {
   const { loading, abortLoad, startLoad, StopLoad } = useLoader();
   const [disableInput, setDisableInput] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState("base");
-  const [allDocuments, setAllDocuments] = useState([]);
+  const [documents, setDocuments] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
 
@@ -78,37 +79,12 @@ export default function BusinessStrategyPage() {
     </div>
   );
 
-  function combineAllDocuments(documents) {
-    const userDocuments = getSortedUserDocuments();
-    const userDocumentsForDropdown = userDocuments.map((document) => ({
-      value: document.title,
-      label: document.title,
-      isUserDefined: true,
-    }));
-    
-    // Always include the base option
-    const baseOption = { value: "base", label: "No specific document", isUserDefined: false };
-    
-    if (documents !== undefined && documents.length > 0) {
-      setAllDocuments([baseOption, ...documents, ...userDocumentsForDropdown]);
-    } else {
-      setAllDocuments([baseOption, ...userDocumentsForDropdown]);
-    }
-  }
-
   useEffect(() => {
-    // Initialize with at least the base option
-    combineAllDocuments([]);
-
-    const handleStorageChange = () => {
-      combineAllDocuments([]);
-    };
-
-    window.addEventListener("update-document", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("update-document", handleStorageChange);
-    };
+    // Load documents from the API
+    getDocuments((docs) => {
+      const baseOption = { value: "base", label: "No specific document" };
+      setDocuments([baseOption, ...docs]);
+    });
   }, []);
 
   const handleStrategyGeneration = async (values) => {
@@ -463,13 +439,7 @@ export default function BusinessStrategyPage() {
                     </label>
                     <Select
                       onChange={setSelectedDocument}
-                      options={[
-                        { value: "base", label: "No specific document" },
-                        { value: "market_research", label: "Market Research" },
-                        { value: "competitor_analysis", label: "Competitor Analysis" },
-                        { value: "financial_forecast", label: "Financial Forecast" },
-                        { value: "customer_feedback", label: "Customer Feedback" }
-                      ]}
+                      options={documents}
                       defaultValue="base"
                       data-testid="document-select"
                     />
