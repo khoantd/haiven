@@ -46,6 +46,10 @@ export const initialiseMenuCategoriesForSidebar = () => {
           key: "ai-tool-research",
           label: <Link href="/company-research?config=ai-tool">AI Tool Research</Link>,
         },
+        {
+          key: "business-strategy",
+          label: <Link href="/business-strategy">Business Strategy</Link>,
+        },
       ],
     },
     ideate: {
@@ -115,6 +119,15 @@ export const staticFeaturesForDashboard = () => {
       categories: ["research"],
       type: "static",
       link: "/company-research?config=ai-tool",
+    },
+    {
+      identifier: "boba-business-strategy",
+      title: "Business Strategy",
+      help_prompt_description:
+        "Develop comprehensive business strategies including market analysis, competitive positioning, and growth plans.",
+      categories: ["research"],
+      type: "static",
+      link: "/business-strategy",
     },
     {
       identifier: "boba-creative-matrix",

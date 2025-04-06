@@ -8,6 +8,9 @@ export const initializeLocalStorage = () => {
   if (!localStorage.getItem("toggles")) {
     localStorage.setItem("toggles", JSON.stringify({}));
   }
+  if (!localStorage.getItem("documents")) {
+    localStorage.setItem("documents", JSON.stringify([]));
+  }
 };
 
 export const addToPinboard = (key, content, isUserDefined = false) => {
@@ -113,4 +116,46 @@ export const getSummaryForTheUserContext = (contextTitle) => {
     (context) => context.title === contextTitle,
   );
   return context ? context.summary : "";
+};
+
+// Document-related functions
+const getDocuments = () => {
+  return JSON.parse(localStorage.getItem("documents")) || [];
+};
+
+export const getSortedUserDocuments = () => {
+  let documents = getDocuments();
+  documents.sort((a, b) => b.timestamp - a.timestamp);
+  return documents;
+};
+
+export const saveDocument = (title, description) => {
+  const timestamp = Date.now();
+  const documentData = getDocuments();
+  documentData.push({
+    title,
+    summary: description,
+    timestamp,
+    isUserDefined: true,
+  });
+  localStorage.setItem("documents", JSON.stringify(documentData));
+  window.dispatchEvent(new Event("update-document"));
+};
+
+export const deleteDocumentByTimestamp = (timestamp) => {
+  const documentData = getDocuments();
+  const updatedDocumentData = documentData.filter(
+    (document) => document.timestamp !== timestamp,
+  );
+
+  localStorage.setItem("documents", JSON.stringify(updatedDocumentData));
+  window.dispatchEvent(new Event("update-document"));
+};
+
+export const getSummaryForTheUserDocument = (documentTitle) => {
+  const userDocuments = getSortedUserDocuments();
+  const document = userDocuments.find(
+    (document) => document.title === documentTitle,
+  );
+  return document ? document.summary : "";
 };
