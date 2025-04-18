@@ -155,16 +155,40 @@ inspirations:
         4. Alignment with business goals
         5. Optional: A simple diagram or bullet-point outline of the architecture
 
-  - id: impacts-of-system-changes
-    title: Identify impacts of system change of a system to existing systems
+  - id: generate-business-requirement-doc
+    title: Generate Business Requirement Document (BRD) from high-level business requirements
     category: analysis
     prompt_template: |
-      Help me identify the impacts of the following changes on the software architecture:
+    Help me generate a Business Requirement Document (BRD) based on the following high-level business requirement:
 
-        [Insert changes here]
+      [Insert high-level business requirement here]
 
-        Include:
-        1. Business impacts (efficiency, cost, revenue, risk)
-        2. Effects on user experience across systems
-        3. Operational changes or adjustments required
-        4. Dependencies or cascading impacts on integrated systems
+    Structure the BRD with the following sections:
+    1. **Business Objective** – Describe the business goals this requirement aims to achieve
+    2. **Scope** – Define what is in scope and out of scope for this requirement
+    3. **Stakeholders** – Identify key stakeholders and their roles
+    4. **Functional Requirements** – List detailed user or system functions that must be supported
+    5. **Non-functional Requirements** – Include performance, scalability, security, and compliance constraints
+    6. **Assumptions and Constraints** – Mention any known limitations or conditions
+    7. **Success Criteria** – Define how success will be measured for this requirement
+
+  - id: balanced-scorecard-department 
+    title: Create a balanced scorecard for a business department
+    category: strategy
+    prompt_template: |
+      Help me build a balanced scorecard for the following business department:
+
+      [Insert department description, strategic objectives, and context here]
+      Include:
+      1.  Strategic objectives for each perspective
+          Financial
+          Customer/Stakeholder
+          Internal Processes
+          Learning & Growth (people, innovation, culture)
+      2.  Key performance indicators (KPIs) that measure each objective
+      3.  Target values and timeframes for every KPI
+      4.  Strategic initiatives or projects that drive each objective
+      5.  Responsible owners or teams for each objective/initiative
+      6.  Links to overarching corporate goals or OKRs
+      7.  Risks, assumptions, and mitigation actions (Optional)
+      8.  A concise table or visual outline of the balanced scorecard (Optional)

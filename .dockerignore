@@ -21,4 +21,5 @@ Dockerfile
 app/cli
 app/devscripts
 app/dev.py
-docs
+docs/
+haiven-sample-knowledge-pack/
