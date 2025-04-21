@@ -164,13 +164,13 @@ inspirations:
       [Insert high-level business requirement here]
 
     Structure the BRD with the following sections:
-    1. **Business Objective** – Describe the business goals this requirement aims to achieve
-    2. **Scope** – Define what is in scope and out of scope for this requirement
-    3. **Stakeholders** – Identify key stakeholders and their roles
-    4. **Functional Requirements** – List detailed user or system functions that must be supported
-    5. **Non-functional Requirements** – Include performance, scalability, security, and compliance constraints
-    6. **Assumptions and Constraints** – Mention any known limitations or conditions
-    7. **Success Criteria** – Define how success will be measured for this requirement
+    1. **Business Objective**: Describe the business goals this requirement aims to achieve
+    2. **Scope** : Define what is in scope and out of scope for this requirement
+    3. **Stakeholders** : Identify key stakeholders and their roles
+    4. **Functional Requirements** : List detailed user or system functions that must be supported
+    5. **Non-functional Requirements** : Include performance, scalability, security, and compliance constraints
+    6. **Assumptions and Constraints** : Mention any known limitations or conditions
+    7. **Success Criteria** : Define how success will be measured for this requirement
 
   - id: balanced-scorecard-department 
     title: Create a balanced scorecard for a business department
@@ -179,16 +179,119 @@ inspirations:
       Help me build a balanced scorecard for the following business department:
 
       [Insert department description, strategic objectives, and context here]
+
       Include:
-      1.  Strategic objectives for each perspective
-          Financial
-          Customer/Stakeholder
-          Internal Processes
-          Learning & Growth (people, innovation, culture)
-      2.  Key performance indicators (KPIs) that measure each objective
-      3.  Target values and timeframes for every KPI
-      4.  Strategic initiatives or projects that drive each objective
-      5.  Responsible owners or teams for each objective/initiative
-      6.  Links to overarching corporate goals or OKRs
-      7.  Risks, assumptions, and mitigation actions (Optional)
-      8.  A concise table or visual outline of the balanced scorecard (Optional)
+      1. Strategic objectives for each perspective including:
+        .Financial
+        .Customer/Stakeholder
+        .Internal Processes
+        .Learning & Growth (people, innovation, culture)
+      2. Key performance indicators that measure each objective
+      3. Target values and timeframes for every KPI
+      4. Strategic initiatives or projects that drive each objective
+      5. Responsible owners or teams for each objective/initiative
+      6. Links to overarching corporate goals or OKRs
+      7. Risks, assumptions, and mitigation actions (Optional)
+      8. A concise table or visual outline of the balanced scorecard (Optional)
+
+  - id: pmo-setup
+    title: Design a Project Management Office (PMO)
+    category: governance
+    prompt_template: |
+      Help me design a fit‑for‑purpose Project Management Office (PMO) for the following context:
+      [Insert brief description of the company’s industry, size, growth stage, product roadmap, and pain‑points here]
+      Include:
+        PMO mission and success criteria aligned with the company’s strategic goals
+        PMO scope: projects, programs, portfolios, and level of authority (supportive, controlling, directive)
+        Recommended organizational structure
+        • Key roles and headcount estimates
+        • Skill sets and reporting lines
+        • Outsourcing vs. in‑house considerations
+        Core governance processes
+        • Intake & prioritization
+        • Stage‑gate or agile cadence
+        • Risk, issue, and change control
+        • Performance reporting cadence
+        Tooling & templates stack
+        • Project tracking / collaboration
+        • Knowledge base / documentation
+        • Metrics dashboards & automation ideas
+        Key performance indicators (KPIs) and OKRs for the PMO
+        Roadmap for PMO rollout (0‑3 months, 3‑6 months, 6‑12 months)
+        Stakeholder engagement & communication plan
+        Budget estimate and funding model
+        Optional: quick‑win initiatives for immediate impact and culture‑building tips
+
+  - id: project-definition-from-high-level-business-req
+    title: Define a project from high‑level business requirements 
+    category: planning
+    prompt_template: | 
+      Help me define a fit‑for‑purpose project to address the following high‑level business requirement:
+
+      [Insert high‑level business requirement here]
+
+      Include: 
+      1. Project mission, measurable objectives, and success criteria aligned with business goals
+      2. Scope definition (in‑scope / out‑of‑scope) and major assumptions & constraints
+      3. Key deliverables and level‑one milestones (with target dates or relative duration)
+      4. High‑level work breakdown structure (WBS) to level 2 or 3
+      5. Schedule overview by phase (initiation, planning, execution, closure)
+      6. Resource plan
+      7. Core roles, headcount estimates, and required skill sets
+      8. Reporting lines and collaboration model
+      9. Outsourcing vs. in‑house considerations
+      10. Stakeholder matrix (role, influence, interest, communication approach)
+      11. Governance & decision‑making model
+      12. Stage‑gate or agile cadence
+      13. Risk, issue, and change control processes
+      14. Performance reporting cadence
+      15. Budget estimate (CAPEX / OPEX split, contingency)
+      16. Quality management approach (standards, reviews, acceptance criteria)
+      17. Key performance indicators (KPIs) and/or project OKRs
+      18. Risk register: top 5 candidate risks with probability, impact, and mitigations
+      19. Communications & engagement plan (channels, frequency, messages)
+      20. Quick‑win initiatives or early‑value deliveries to build momentum (optional)
+
+  - id: business-strategy-from-high-level-req
+    title: Define a business strategic plan from high‑level requirements
+    category: strategy
+    prompt_template: | 
+      Help me design a fit‑for‑purpose Business Strategic Plan for the following context:
+
+      [Insert brief description of the company’s industry, size, growth stage, key capabilities, and pain‑points here]
+
+      Include: 
+      1. Vision and mission statements aligned to the requirement and corporate purpose
+      2. Strategic goals and success criteria (SMART KPIs & OKRs)
+      3. Market and competitive landscape
+      4. Target segments, market size, growth trends
+      5. Competitor benchmarking and positioning
+      6. SWOT or TOWS summary of internal & external factors
+      7. Core value proposition and differentiation logic
+      8. Portfolio of strategic initiatives
+      9. Initiative name, objective, and executive owner
+      10. High‑level scope, expected benefits (revenue, cost, risk, ESG)
+      11. Prioritization score and dependency notes (quick‑win vs. long‑bet)
+      12. Operating‑model implications
+      13. Recommended org structure and talent needs
+      14. Governance and decision‑rights model
+      15. Build / buy / partner considerations for capability gaps
+      16. Financial plan and resource allocation
+      17. 3‑year P&L impact projection (best / realistic / worst cases)
+      18. Investment envelope, funding sources, and cash‑flow profile
+      19. Payback period and ROI targets
+      20. Roadmap and milestones
+      21. 0‑3 months — mobilize & quick wins
+      22. 3‑12 months — build & pilot solutions
+      23. 12‑36 months — scale & optimize
+      24. Risk register — top 5 risks with probability, impact, and mitigations
+      25. Performance‑management cadence
+      26. Review cycles, dashboards, and leading vs. lagging metrics
+      27. Change‑management and communication strategy
+      28. Stakeholder map, messaging, and engagement channels
+      29. Culture‑building actions and incentive alignment
+      30. Enabling technology and data prerequisites
+      31. Tooling stack, analytics layer, automation opportunities
+      32. Exit or pivot criteria (optional)
+      
+      
