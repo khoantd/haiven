@@ -294,4 +294,28 @@ inspirations:
       31. Tooling stack, analytics layer, automation opportunities
       32. Exit or pivot criteria (optional)
       
-      
+  - id: pmo-ground-up-startup
+    title: Build a lean PMO for a high‑growth startup
+    category: pmo‑design
+    prompt_template: |
+      Help me design a fit‑for‑purpose Project Management Office (PMO) for the following startup context:
+
+      [Insert 2‑3 lines on industry, headcount (<150), funding stage, product roadmap, and burning pain‑points]
+
+      Include:
+      • PMO mission and “definition‑of‑done” success criteria tied to the startup’s near‑term strategic goals  
+      • PMO scope (project coaching, minimal governance, lightweight portfolio view) and authority level (supportive)  
+      • Recommended org structure  
+        ◦ Roles (e.g., PMO Lead, 1–2 Agile Coaches / Project Leads, Ops Analyst) and headcount ramp‑up plan  
+        ◦ Key skill sets (scrum, rapid prototyping, metrics literacy) and reporting lines  
+        ◦ Outsourcing vs. in‑house guidance for non‑core work  
+      • Core governance processes with a bias for speed  
+        ◦ Lean intake & prioritisation Kanban  
+        ◦ Sprint / release cadence instead of stage‑gates  
+        ◦ Just‑enough risk & change control and weekly burn‑up reporting  
+      • Tooling stack (e.g., Jira, Confluence, Slack, automated dashboards) and 3–5 must‑have templates  
+      • Startup‑friendly KPIs & OKRs (cycle time, feature lead‑time, velocity accuracy, customer NPS)  
+      • Rollout roadmap (0‑1 month set‑up, 1‑3 months stabilise, 3‑6 months scale)  
+      • Stakeholder engagement hacks for founders, investors, cross‑functional squads  
+      • Lean budget model (run‑rate vs. capitalised, SaaS licences, contingency)  
+      • Quick‑wins to build credibility (e.g., one‑page playbook, demo day cadence)
