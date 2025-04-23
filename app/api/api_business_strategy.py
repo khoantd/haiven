@@ -6,10 +6,12 @@ from llms.chats import ChatManager
 from llms.model_config import ModelConfig
 from config_service import ConfigService
 from .strategy import router as strategy_router
+from .strategy_evaluation import router as strategy_evaluation_router
 
 class ApiBusinessStrategy(HaivenBaseApi):
     def __init__(self, app, chat_session_memory, model_key, prompt_list, config_service: ConfigService):
         super().__init__(app, chat_session_memory, model_key, prompt_list)
         self.config_service = config_service
-        # Include the strategy router
-        app.include_router(strategy_router, prefix="/api", tags=["strategy"]) 
+        # Include the strategy routers
+        app.include_router(strategy_router, prefix="/api", tags=["strategy"])
+        app.include_router(strategy_evaluation_router, prefix="/api", tags=["strategy-evaluation"]) 

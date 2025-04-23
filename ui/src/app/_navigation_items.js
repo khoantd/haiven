@@ -50,6 +50,10 @@ export const initialiseMenuCategoriesForSidebar = () => {
           key: "business-strategy",
           label: <Link href="/business-strategy">Business Strategy</Link>,
         },
+        {
+          key: "strategy-evaluation",
+          label: <Link href="/strategy-evaluation">Strategy Evaluation</Link>,
+        },
       ],
     },
     ideate: {
@@ -128,6 +132,15 @@ export const staticFeaturesForDashboard = () => {
       categories: ["research"],
       type: "static",
       link: "/business-strategy",
+    },
+    {
+      identifier: "boba-strategy-evaluation",
+      title: "Strategy Evaluation",
+      help_prompt_description:
+        "Evaluate business strategies using frameworks like SWOT/TOWS, Value Chain, 5 Forces Analysis, and Comparative Advantage.",
+      categories: ["research"],
+      type: "static",
+      link: "/strategy-evaluation",
     },
     {
       identifier: "boba-creative-matrix",
