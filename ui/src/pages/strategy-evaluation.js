@@ -28,7 +28,8 @@ import {
   RiBarChartBoxLine,
   RiLineChartLine,
   RiPieChartLine,
-  RiTableLine
+  RiTableLine,
+  RiBookLine
 } from "react-icons/ri";
 import { fetchSSE } from "../app/_fetch_sse";
 import { parse } from "best-effort-json-parser";
@@ -270,27 +271,27 @@ export default function StrategyEvaluationPage() {
                 <DynamicDataRenderer data={data.customer_profile} />
               </Card>
               <Card title="Customer Jobs" className="analysis-card">
-                <DynamicDataRenderer data={data.customer_jobs} />
+                <DynamicDataRenderer data={data.customer_profile?.jobs} />
               </Card>
               <Card title="Customer Pains" className="analysis-card">
-                <DynamicDataRenderer data={data.customer_pains} />
+                <DynamicDataRenderer data={data.customer_profile?.pains} />
               </Card>
               <Card title="Customer Gains" className="analysis-card">
-                <DynamicDataRenderer data={data.customer_gains} />
+                <DynamicDataRenderer data={data.customer_profile?.gains} />
               </Card>
             </Col>
             <Col xs={24} md={12}>
-              <Card title="Value Proposition" className="analysis-card">
-                <DynamicDataRenderer data={data.value_proposition} />
+              <Card title="Value Map" className="analysis-card">
+                <DynamicDataRenderer data={data.value_map} />
               </Card>
               <Card title="Products & Services" className="analysis-card">
-                <DynamicDataRenderer data={data.products_services} />
+                <DynamicDataRenderer data={data.value_map?.products_services} />
               </Card>
               <Card title="Pain Relievers" className="analysis-card">
-                <DynamicDataRenderer data={data.pain_relievers} />
+                <DynamicDataRenderer data={data.value_map?.pain_relievers} />
               </Card>
               <Card title="Gain Creators" className="analysis-card">
-                <DynamicDataRenderer data={data.gain_creators} />
+                <DynamicDataRenderer data={data.value_map?.gain_creators} />
               </Card>
             </Col>
           </Row>
@@ -413,7 +414,7 @@ export default function StrategyEvaluationPage() {
                             { value: "value_proposition", label: "Value Proposition Canvas" },
                             { value: "value_chain", label: "Value Chain Analysis" },
                             { value: "five_forces", label: "Five Forces Analysis" },
-                            { value: "comparative_advantage", label: "Comparative Advantage" }
+                            { value: "comparative_advantage", label: "Competitive Advantage" }
                           ]}
                         />
                       </Form.Item>
@@ -618,7 +619,7 @@ export default function StrategyEvaluationPage() {
                     label: (
                       <span>
                         <RiTableLine style={{ marginRight: '8px' }} />
-                        Comparative Advantage
+                        Competitive Advantage
                       </span>
                     ),
                     children: renderFrameworkContent("comparative_advantage")
@@ -648,6 +649,46 @@ export default function StrategyEvaluationPage() {
                   <li style={{ marginBottom: '8px' }}>Identify key areas for improvement based on the analysis</li>
                   <li style={{ marginBottom: '8px' }}>Use the insights to refine your business strategy</li>
                   <li style={{ marginBottom: '8px' }}>Consider using our <a href="/business-strategy">Business Strategy</a> tool to develop an improved strategy</li>
+                </ul>
+              </Card>
+
+              <Card 
+                title={
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <RiBookLine style={{ marginRight: '8px' }} />
+                    <span>Reference Sources</span>
+                  </div>
+                }
+                style={{ 
+                  marginTop: '20px',
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                  borderRadius: "8px",
+                  overflow: "hidden"
+                }}
+              >
+                <Paragraph style={{ fontSize: '16px', lineHeight: '1.6' }}>
+                  This evaluation was generated using the following sources:
+                </Paragraph>
+                <ul style={{ fontSize: '16px', lineHeight: '1.6', paddingLeft: '20px' }}>
+                  <li style={{ marginBottom: '8px' }}>
+                    <strong>Company Information:</strong> {selectedDocument === "base" ? "Publicly available information" : `Selected document: ${documents.find(doc => doc.value === selectedDocument)?.label}`}
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    <strong>Industry Data:</strong> Latest market trends and industry reports
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    <strong>Framework References:</strong>
+                    <ul style={{ paddingLeft: '20px', marginTop: '8px' }}>
+                      {evaluationData && Object.keys(evaluationData).map(framework => (
+                        <li key={framework} style={{ marginBottom: '4px' }}>
+                          {framework.replace(/_/g, ' ').toUpperCase()}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  <li style={{ marginBottom: '8px' }}>
+                    <strong>Additional Context:</strong> {form.getFieldValue('additionalContext') || 'None provided'}
+                  </li>
                 </ul>
               </Card>
             </>
