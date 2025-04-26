@@ -2,17 +2,38 @@
 import { useState } from "react";
 import { Select, Tooltip, Button } from "antd";
 import { RiAddBoxLine } from "react-icons/ri";
+import { DownOutlined } from "@ant-design/icons";
+
 import HelpTooltip from "./_help_tooltip";
 import AddContext from "../app/_add_context";
 
 function ContextChoice({ contexts, onChange }) {
   const [isAddingContext, setIsAddingContext] = useState(false);
+  const [selectedContexts, setSelectedContexts] = useState([]);
+
+  const handleChange = (values) => {
+    setSelectedContexts(values);
+    if (onChange) {
+      onChange(values);
+    }
+  };
 
   const tooltipMessage =
     contexts.length === 1
       ? "There are no contexts configured in the knowledge pack. Contexts can provide project-specific information about domain and architecture that Haiven can reuse across prompts."
       : "Choose a context from your knowledge pack that is relevant to the domain, architecture, or team you are working on.";
-  return (
+  
+      const MAX_COUNT = 3;
+      const dropdownSuffix = (
+        <>
+          <span>
+            {selectedContexts.length} / {MAX_COUNT}
+          </span>
+          <DownOutlined />
+        </>
+      );
+  
+      return (
     <div className="user-input">
       <div className="input-context-label">
         <label>
@@ -35,10 +56,14 @@ function ContextChoice({ contexts, onChange }) {
       </div>
 
       <Select
-        onChange={onChange}
+        onChange={handleChange}
         options={contexts}
-        defaultValue="base"
         data-testid="context-select"
+        mode="multiple"
+        placeholder="Please select the context(s)"
+        maxCount={MAX_COUNT}
+        suffixIcon={dropdownSuffix}
+        value={selectedContexts}
       />
       <AddContext
         isAddingContext={isAddingContext}

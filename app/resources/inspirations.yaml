@@ -1,6 +1,7 @@
 inspirations:
   - id: retrospective-facilitator
-    title: Get suggestions for retrospective formats and help analyzing team feedback patterns
+    title: Get suggestions for retrospective formats and help analyzing team
+      feedback patterns
     category: delivery
     prompt_template: |
       I need help facilitating a team retrospective. Here's some context about my team and recent sprint:
@@ -11,8 +12,7 @@ inspirations:
       1. Suggestions for an engaging retrospective format that fits this context
       2. Key questions to ask the team
       3. Tips for facilitating constructive discussions
-      4. Ideas for capturing and organizing the feedback 
-
+      4. Ideas for capturing and organizing the feedback
 
   - id: changelog-builder
     title: Convert commit messages into a structured, user-friendly changelog
@@ -137,11 +137,12 @@ inspirations:
       Analyze:
       1. User journey steps
       2. Potential pain points
-      3. Cognitive load      
+      3. Cognitive load
       4. Improvement suggestions
 
   - id: requirements-to-architecture-design
-    title: Convert business requirements into a high-level software architecture design
+    title: Convert business requirements into a high-level software architecture
+      design
     category: design
     prompt_template: |
       Help me convert the following business requirements into a high-level software architecture design:
@@ -151,28 +152,29 @@ inspirations:
         Include:
         1. Core components and their responsibilities
         2. Key data flows and integrations
-        3. Scalability, security, and maintainability concerns  
+        3. Scalability, security, and maintainability concerns
         4. Alignment with business goals
         5. Optional: A simple diagram or bullet-point outline of the architecture
 
   - id: generate-business-requirement-doc
-    title: Generate Business Requirement Document (BRD) from high-level business requirements
+    title: Generate Business Requirement Document (BRD) from high-level business
+      requirements
     category: analysis
-    prompt_template: |
+    prompt_template: ''
     Help me generate a Business Requirement Document (BRD) based on the following high-level business requirement:
 
-      [Insert high-level business requirement here]
+      - Insert high-level business requirement here
 
-    Structure the BRD with the following sections:
+    Structure the BRD with the following sections: null
     1. **Business Objective**: Describe the business goals this requirement aims to achieve
-    2. **Scope** : Define what is in scope and out of scope for this requirement
-    3. **Stakeholders** : Identify key stakeholders and their roles
-    4. **Functional Requirements** : List detailed user or system functions that must be supported
-    5. **Non-functional Requirements** : Include performance, scalability, security, and compliance constraints
-    6. **Assumptions and Constraints** : Mention any known limitations or conditions
-    7. **Success Criteria** : Define how success will be measured for this requirement
+    2. **Scope**: Define what is in scope and out of scope for this requirement
+    3. **Stakeholders**: Identify key stakeholders and their roles
+    4. **Functional Requirements**: List detailed user or system functions that must be supported
+    5. **Non-functional Requirements**: Include performance, scalability, security, and compliance constraints
+    6. **Assumptions and Constraints**: Mention any known limitations or conditions
+    7. **Success Criteria**: Define how success will be measured for this requirement
 
-  - id: balanced-scorecard-department 
+  - id: balanced-scorecard-department
     title: Create a balanced scorecard for a business department
     category: strategy
     prompt_template: |
@@ -223,14 +225,14 @@ inspirations:
         Optional: quick‑win initiatives for immediate impact and culture‑building tips
 
   - id: project-definition-from-high-level-business-req
-    title: Define a project from high‑level business requirements 
+    title: Define a project from high‑level business requirements
     category: planning
-    prompt_template: | 
+    prompt_template: |
       Help me define a fit‑for‑purpose project to address the following high‑level business requirement:
 
       [Insert high‑level business requirement here]
 
-      Include: 
+      Include:
       1. Project mission, measurable objectives, and success criteria aligned with business goals
       2. Scope definition (in‑scope / out‑of‑scope) and major assumptions & constraints
       3. Key deliverables and level‑one milestones (with target dates or relative duration)
@@ -255,12 +257,12 @@ inspirations:
   - id: business-strategy-from-high-level-req
     title: Define a business strategic plan from high‑level requirements
     category: strategy
-    prompt_template: | 
+    prompt_template: |
       Help me design a fit‑for‑purpose Business Strategic Plan for the following context:
 
       [Insert brief description of the company’s industry, size, growth stage, key capabilities, and pain‑points here]
 
-      Include: 
+      Include:
       1. Vision and mission statements aligned to the requirement and corporate purpose
       2. Strategic goals and success criteria (SMART KPIs & OKRs)
       3. Market and competitive landscape
@@ -293,7 +295,7 @@ inspirations:
       30. Enabling technology and data prerequisites
       31. Tooling stack, analytics layer, automation opportunities
       32. Exit or pivot criteria (optional)
-      
+
   - id: pmo-ground-up-startup
     title: Build a lean PMO for a high‑growth startup
     category: pmo‑design
@@ -303,19 +305,19 @@ inspirations:
       [Insert 2‑3 lines on industry, headcount (<150), funding stage, product roadmap, and burning pain‑points]
 
       Include:
-      • PMO mission and “definition‑of‑done” success criteria tied to the startup’s near‑term strategic goals  
-      • PMO scope (project coaching, minimal governance, lightweight portfolio view) and authority level (supportive)  
-      • Recommended org structure  
-        ◦ Roles (e.g., PMO Lead, 1–2 Agile Coaches / Project Leads, Ops Analyst) and headcount ramp‑up plan  
-        ◦ Key skill sets (scrum, rapid prototyping, metrics literacy) and reporting lines  
-        ◦ Outsourcing vs. in‑house guidance for non‑core work  
-      • Core governance processes with a bias for speed  
-        ◦ Lean intake & prioritisation Kanban  
-        ◦ Sprint / release cadence instead of stage‑gates  
-        ◦ Just‑enough risk & change control and weekly burn‑up reporting  
-      • Tooling stack (e.g., Jira, Confluence, Slack, automated dashboards) and 3–5 must‑have templates  
-      • Startup‑friendly KPIs & OKRs (cycle time, feature lead‑time, velocity accuracy, customer NPS)  
-      • Rollout roadmap (0‑1 month set‑up, 1‑3 months stabilise, 3‑6 months scale)  
-      • Stakeholder engagement hacks for founders, investors, cross‑functional squads  
-      • Lean budget model (run‑rate vs. capitalised, SaaS licences, contingency)  
+      • PMO mission and “definition‑of‑done” success criteria tied to the startup’s near‑term strategic goals
+      • PMO scope (project coaching, minimal governance, lightweight portfolio view) and authority level (supportive)
+      • Recommended org structure
+        ◦ Roles (e.g., PMO Lead, 1–2 Agile Coaches / Project Leads, Ops Analyst) and headcount ramp‑up plan
+        ◦ Key skill sets (scrum, rapid prototyping, metrics literacy) and reporting lines
+        ◦ Outsourcing vs. in‑house guidance for non‑core work
+      • Core governance processes with a bias for speed
+        ◦ Lean intake & prioritisation Kanban
+        ◦ Sprint / release cadence instead of stage‑gates
+        ◦ Just‑enough risk & change control and weekly burn‑up reporting
+      • Tooling stack (e.g., Jira, Confluence, Slack, automated dashboards) and 3–5 must‑have templates
+      • Startup‑friendly KPIs & OKRs (cycle time, feature lead‑time, velocity accuracy, customer NPS)
+      • Rollout roadmap (0‑1 month set‑up, 1‑3 months stabilise, 3‑6 months scale)
+      • Stakeholder engagement hacks for founders, investors, cross‑functional squads
+      • Lean budget model (run‑rate vs. capitalised, SaaS licences, contingency)
       • Quick‑wins to build credibility (e.g., one‑page playbook, demo day cadence)
