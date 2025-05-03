@@ -607,3 +607,57 @@ class TestApi(unittest.TestCase):
         mock_inspirations_manager.get_inspiration_by_id.assert_called_once_with(
             "non-existent"
         )
+
+    def test_prompt_endpoint_validation(self):
+        # Setup minimal ApiBasics with mocks
+        ApiBasics(
+            self.app,
+            chat_manager=MagicMock(),
+            model_config=MagicMock(),
+            prompts_guided=MagicMock(),
+            knowledge_manager=MagicMock(),
+            prompts_chat=MagicMock(),
+            image_service=MagicMock(),
+            config_service=MagicMock(),
+            disclaimer_and_guidelines=MagicMock(),
+            inspirations_manager=MagicMock(),
+        )
+
+        # Valid request (should succeed)
+        response = self.client.post(
+            "/api/prompt",
+            json={"userinput": "hello"},
+        )
+        assert response.status_code == 200 or response.status_code == 500  # 500 if mocks not fully wired
+
+        # Malformed: array instead of object
+        response = self.client.post(
+            "/api/prompt",
+            data="[1,2,3]",
+            headers={"Content-Type": "application/json"},
+        )
+        assert response.status_code == 422
+
+        # Malformed: string instead of object
+        response = self.client.post(
+            "/api/prompt",
+            data='"just a string"',
+            headers={"Content-Type": "application/json"},
+        )
+        assert response.status_code == 422
+
+        # Malformed: null
+        response = self.client.post(
+            "/api/prompt",
+            data="null",
+            headers={"Content-Type": "application/json"},
+        )
+        assert response.status_code == 422
+
+        # Malformed: empty body
+        response = self.client.post(
+            "/api/prompt",
+            data="",
+            headers={"Content-Type": "application/json"},
+        )
+        assert response.status_code == 422

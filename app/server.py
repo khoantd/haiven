@@ -21,6 +21,8 @@ from ui.url import HaivenUrl
 import hashlib
 import time
 import os
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 
 class Server:
@@ -257,6 +259,20 @@ class Server:
     # FastAPI APP => for authentication and static file serving
     def create(self):
         app = FastAPI()
+
+        # Add a global exception handler for 422 Unprocessable Entity
+        @app.exception_handler(RequestValidationError)
+        async def validation_exception_handler(request, exc):
+            HaivenLogger.get().error(
+                "Validation error: %r | Body: %r" % (exc.errors(), getattr(exc, 'body', None))
+            )
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "detail": "Request validation failed. Please ensure you are sending a valid JSON object with the correct fields.",
+                    "errors": exc.errors(),
+                },
+            )
 
         self.user_endpoints(app)
         self.serve_static(app)

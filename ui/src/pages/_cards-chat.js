@@ -111,12 +111,16 @@ const CardsChat = ({
       firstStepInput: promptInput,
       type: "prompt",
       previousPromptId: selectedPromptId,
-      ...(selectedContext.value !== "base" &&
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
         selectedContext.isUserDefined && {
           userContext: getSummaryForTheUserContext(selectedContext.value),
-        }),
-      ...(selectedContext.value !== "base" &&
-        !selectedContext.isUserDefined && { context: selectedContext.value }),
+        }
+      ),
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
+        !selectedContext.isUserDefined && { context: selectedContext.value }
+      ),
       itemSummary: scenarioToText(scenario),
       ...scenario,
     });
@@ -148,12 +152,16 @@ const CardsChat = ({
   const buildRequestDataCardBuilding = () => {
     return {
       userinput: promptInput,
-      ...(selectedContext.value !== "base" &&
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
         selectedContext.isUserDefined && {
           userContext: getSummaryForTheUserContext(selectedContext.value),
-        }),
-      ...(selectedContext.value !== "base" &&
-        !selectedContext.isUserDefined && { context: selectedContext.value }),
+        }
+      ),
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
+        !selectedContext.isUserDefined && { context: selectedContext.value }
+      ),
       promptid: usePromptId
         ? selectedPromptConfiguration?.identifier
         : undefined,
@@ -165,12 +173,16 @@ const CardsChat = ({
       userinput:
         "Give me some additional ones, in the same JSON format. Do not repeat any of the ones you already told me about, come up with new ideas.\n\n" +
         "\n\nOnly return JSON, nothing else.\n",
-      ...(selectedContext.value !== "base" &&
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
         selectedContext.isUserDefined && {
           userContext: getSummaryForTheUserContext(selectedContext.value),
-        }),
-      ...(selectedContext.value !== "base" &&
-        !selectedContext.isUserDefined && { context: selectedContext.value }),
+        }
+      ),
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
+        !selectedContext.isUserDefined && { context: selectedContext.value }
+      ),
       promptid: undefined,
       chatSessionId: chatSessionIdCardBuilding,
       json: true,
@@ -180,12 +192,16 @@ const CardsChat = ({
   const buildRequestDataFollowUp = (followUpId) => {
     return {
       userinput: promptInput,
-      ...(selectedContext.value !== "base" &&
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
         selectedContext.isUserDefined && {
           userContext: getSummaryForTheUserContext(selectedContext.value),
-        }),
-      ...(selectedContext.value !== "base" &&
-        !selectedContext.isUserDefined && { context: selectedContext.value }),
+        }
+      ),
+      ...(
+        selectedContext && selectedContext.value !== "base" &&
+        !selectedContext.isUserDefined && { context: selectedContext.value }
+      ),
       promptid: followUpId,
       scenarios: scenarios
         .filter((scenario) => scenario.exclude !== true)

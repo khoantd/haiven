@@ -193,7 +193,6 @@ export default function PromptPreview({
           ></textarea>
         ) : (
           <ReactMarkdown
-            className="content-viewer"
             remarkPlugins={[[remarkGfm]]}
             components={{
               del(props) {

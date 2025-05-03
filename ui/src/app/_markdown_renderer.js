@@ -70,15 +70,15 @@ const MarkdownRenderer = ({
   };
 
   return (
-    <ReactMarkdown
-      className={className}
-      data-testid={dataTestId}
-      remarkPlugins={[remarkGfm]}
-      components={{ ...components, ...(markdownProps.components || {}) }}
-      {...markdownProps}
-    >
-      {content}
-    </ReactMarkdown>
+    <div className={className} data-testid={dataTestId}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{ ...components, ...(markdownProps.components || {}) }}
+        {...markdownProps}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 };
 

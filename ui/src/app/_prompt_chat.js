@@ -33,9 +33,11 @@ const PromptChat = ({
   const chatRef = useRef();
 
   // User inputs
-  const [selectedPrompt, setPromptSelection] = useState(promptId); // via query parameter
-  const [selectedContext, setSelectedContext] = useState("");
-  const [selectedDocument, setSelectedDocument] = useState("");
+  const [selectedPrompt, setPromptSelection] = useState(
+    prompts.find((prompt) => prompt.identifier === promptId) || null
+  );
+  const [selectedContext, setSelectedContext] = useState(null);
+  const [selectedDocument, setSelectedDocument] = useState(null);
   const [imageDescription, setImageDescription] = useState("");
   const [userInput, setUserInput] = useState(initialInput);
 
@@ -86,16 +88,16 @@ const PromptChat = ({
 
   const buildFirstChatRequestBody = (userInput) => {
     return {
-      userinput: usePromptId ? appendImageDescription(userInput) : userInput,
+      userinput: userInput ?? "",
       promptid: usePromptId ? selectedPrompt?.identifier : undefined,
       chatSessionId: chatSessionId,
-      ...(selectedContext.value !== "base" &&
+      ...(selectedContext && selectedContext.value !== "base" &&
         selectedContext.isUserDefined && {
           userContext: getSummaryForTheUserContext(selectedContext.value),
         }),
-      ...(selectedContext.value !== "base" &&
+      ...(selectedContext && selectedContext.value !== "base" &&
         !selectedContext.isUserDefined && { context: selectedContext.value }),
-      ...(selectedDocument !== "base" && { document: selectedDocument }),
+      ...(selectedDocument && selectedDocument !== "base" && { document: selectedDocument }),
     };
   };
 
@@ -117,14 +119,24 @@ const PromptChat = ({
     const lastMessage = messages[messages.length - 1];
     let requestData;
     if (!conversationStarted) {
-      requestData = buildFirstChatRequestBody(lastMessage?.content);
+      requestData = buildFirstChatRequestBody(lastMessage?.content ?? "");
     } else {
       requestData = {
-        userinput: lastMessage?.content,
+        userinput: lastMessage?.content ?? "",
         chatSessionId: chatSessionId,
-        ...(selectedDocument !== "base" && { document: selectedDocument }),
+        ...(selectedDocument && selectedDocument !== "base" && { document: selectedDocument }),
       };
     }
+
+    // Defensive: ensure requestData is always an object
+    if (!requestData || typeof requestData !== "object" || Array.isArray(requestData)) {
+      requestData = { userinput: "" };
+    }
+
+    const rawBody = JSON.stringify(requestData || { userinput: "" });
+    console.log("Raw body sent to /api/prompt:", rawBody);
+
+    console.log("Submitting to /api/prompt:", requestData);
 
     try {
       const response = await fetch("/api/prompt", {
@@ -133,15 +145,26 @@ const PromptChat = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData),
+        body: rawBody,
       });
 
       if (!response.ok) {
-        const errorBody = await response.json();
-        const detailedErrorMessage =
-          errorBody.detail || "An unknown error occurred.";
+        let errorBody;
+        try {
+          errorBody = await response.json();
+        } catch (e) {
+          errorBody = await response.text();
+        }
+        let detailedErrorMessage;
+        if (typeof errorBody === "object" && errorBody !== null) {
+          detailedErrorMessage =
+            typeof errorBody.detail === "string"
+              ? errorBody.detail
+              : JSON.stringify(errorBody.detail || errorBody);
+        } else {
+          detailedErrorMessage = errorBody || "An unknown error occurred.";
+        }
         const errorMessage = `ERROR: ${detailedErrorMessage}`;
-
         throw new Error(errorMessage);
       }
 
@@ -155,7 +178,12 @@ const PromptChat = ({
 
       return response;
     } catch (error) {
-      toast.error(error.message);
+      // If error.message is an object, stringify it
+      const message =
+        typeof error.message === "string"
+          ? error.message
+          : JSON.stringify(error.message);
+      toast.error(message);
     }
   };
 
@@ -172,7 +200,7 @@ const PromptChat = ({
   }
 
   const handleContextSelection = (value) => {
-    setSelectedContext(allContexts.find((context) => context.value === value));
+    setSelectedContext(allContexts.find((context) => context.value === value) || null);
   };
 
   useEffect(() => {
